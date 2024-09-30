@@ -1,2 +1,2 @@
 include versioneer.py
-include q2_amr/_version.py
+include q2_rgi/_version.py

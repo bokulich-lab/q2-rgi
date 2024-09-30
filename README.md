@@ -1,27 +1,27 @@
-# q2-amr
-![CI](https://github.com/bokulich-lab/q2-amr/actions/workflows/ci-dev.yaml/badge.svg)
-[![codecov](https://codecov.io/gh/bokulich-lab/q2-amr/branch/main/graph/badge.svg?token=THMBOFUZR0)](https://codecov.io/gh/bokulich-lab/q2-amr)
+# q2-rgi
+![CI](https://github.com/bokulich-lab/q2-rgi/actions/workflows/ci-dev.yaml/badge.svg)
+[![codecov](https://codecov.io/gh/bokulich-lab/q2-rgi/branch/main/graph/badge.svg?token=THMBOFUZR0)](https://codecov.io/gh/bokulich-lab/q2-rgi)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 QIIME 2 plugin for antimicrobial resistance gene annotation of MAGs and metagenomic reads.
 
 ## Installation
-To install _q2-amr_, follow the steps described below.
+To install _q2-rgi_, follow the steps described below.
 
 <details>
 <summary><b>macOS (intel) / Linux</b></summary>
 
 ```shell
-mamba create -yn q2-amr \
+mamba create -yn q2-rgi \
   -c https://packages.qiime2.org/qiime2/2024.2/shotgun/released/ \
   -c qiime2 -c conda-forge -c bioconda -c defaults \
   qiime2 q2cli q2templates q2-types q2-feature-table q2-demux rgi tqdm
 
-conda activate q2-amr
+conda activate q2-rgi
 
 pip install --no-deps --force-reinstall \
   git+https://github.com/misialq/rgi.git@py38-fix \
-  git+https://github.com/bokulich-lab/q2-amr.git
+  git+https://github.com/bokulich-lab/q2-rgi.git
 ```
 
 Refresh cache and check that everything worked:
@@ -35,17 +35,17 @@ qiime info
 <summary><b>macOS (apple silicon)</b></summary>
 
 ```shell
-CONDA_SUBDIR=osx-64 mamba create -yn q2-amr \
+CONDA_SUBDIR=osx-64 mamba create -yn q2-rgi \
   -c https://packages.qiime2.org/qiime2/2024.2/shotgun/released/ \
   -c qiime2 -c conda-forge -c bioconda -c defaults \
   qiime2 q2cli q2templates q2-types q2-feature-table q2-demux rgi tqdm
 
-conda activate q2-amr
+conda activate q2-rgi
 conda config --env --set subdir osx-64
 
 pip install --no-deps --force-reinstall \
   git+https://github.com/misialq/rgi.git@py38-fix \
-  git+https://github.com/bokulich-lab/q2-amr.git
+  git+https://github.com/bokulich-lab/q2-rgi.git
 ```
 
 Refresh cache and check that everything worked:
