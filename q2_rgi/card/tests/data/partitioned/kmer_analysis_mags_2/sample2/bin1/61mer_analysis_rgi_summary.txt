@@ -1,0 +1,2 @@
+ORF_ID	Contig	Cut_Off	Best_Hit_ARO	CARD*kmer Prediction	Taxonomic kmers	Genomic kmers
+"NC_000962.3_273 # 314309 # 314854 # -1 # ID=1_273;partial=00;start_type=GTG;rbs_motif=AGG;rbs_spacer=4bp;gc_cont=0.679"	NC_000962.3_273	Perfect	AAC(2')-Ic	Mycobacterium tuberculosis (chromosome)	"Mycobacterium tuberculosis: 486; "	"chr + plasmid: 0; plasmid: 0; chr: 486; "

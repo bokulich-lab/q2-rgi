@@ -1,0 +1,3 @@
+ARO term	Mapped reads with kmer DB hits	CARD*kmer Prediction	Single species (chromosome) reads	Single species (chromosome or plasmid) reads	Single species (plasmid) reads	Single species (no genomic info) reads	Single genus (chromosome) reads	Single genus (chromosome or plasmid) reads	Single genus (plasmid) reads	Single genus (no genomic info) reads	Promiscuous plasmid reads	Unknown taxonomy (chromosome) reads	Unknown taxonomy (chromosome or plasmid) reads	Unknown taxonomy (no genomic info) reads
+mdtP	2										0	1	1	0
+mdtF	2										0	2	0	0

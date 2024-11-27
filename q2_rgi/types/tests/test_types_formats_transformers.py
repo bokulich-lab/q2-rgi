@@ -69,7 +69,9 @@ class AMRTypesTestPluginBase(TestPluginBase):
         return pkg_resources.resource_filename(self.package, "data/%s" % filename)
 
 
-class TestCARDDatabaseTypesAndFormats(AMRTypesTestPluginBase):
+class TestCARDDatabaseTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_card_database_format_validate_positive(self):
         filepath = self.get_data_path("card_test.json")
         format = CARDDatabaseFormat(filepath, mode="r")
