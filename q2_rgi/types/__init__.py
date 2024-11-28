@@ -1,11 +1,10 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2019-2023, QIIME 2 development team.
+# Copyright (c) 2022, Bokulich Lab.
 #
 # Distributed under the terms of the Modified BSD License.
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-
 from ._format import (
     CARDAlleleAnnotationDirectoryFormat,
     CARDAlleleAnnotationFormat,
@@ -37,35 +36,41 @@ from ._type import (
     CARDDatabase,
     CARDGeneAnnotation,
     CARDKmerDatabase,
+    CARDMAGsKmerAnalysis,
+    CARDReadsAlleleKmerAnalysis,
+    CARDReadsGeneKmerAnalysis,
 )
 
 __all__ = [
-    "CARDDatabaseFormat",
-    "CARDDatabaseDirectoryFormat",
+    "CARDKmerDatabaseDirectoryFormat",
+    "CARDKmerJSONFormat",
+    "CARDKmerTXTFormat",
+    "CARDMAGsKmerAnalysisDirectoryFormat",
+    "GapDNAFASTAFormat",
+    "CARDWildcardIndexFormat",
     "CARDAnnotationTXTFormat",
     "CARDAnnotationJSONFormat",
     "CARDAnnotationDirectoryFormat",
+    "CARDDatabaseFormat",
+    "CARDDatabaseDirectoryFormat",
     "CARDAlleleAnnotationFormat",
     "CARDGeneAnnotationFormat",
     "CARDAnnotationStatsFormat",
     "CARDAlleleAnnotationDirectoryFormat",
     "CARDGeneAnnotationDirectoryFormat",
-    "CARDDatabase",
-    "CARDAnnotation",
-    "CARDAlleleAnnotation",
-    "CARDGeneAnnotation",
-    "CARDKmerDatabaseDirectoryFormat",
-    "CARDKmerJSONFormat",
-    "CARDKmerTXTFormat",
-    "GapDNAFASTAFormat",
-    "CARDWildcardIndexFormat",
-    "CARDKmerDatabase",
     "CARDMAGsKmerAnalysisFormat",
     "CARDMAGsKmerAnalysisJSONFormat",
-    "CARDMAGsKmerAnalysisDirectoryFormat",
     "CARDReadsAlleleKmerAnalysisFormat",
     "CARDReadsGeneKmerAnalysisFormat",
     "CARDReadsKmerAnalysisJSONFormat",
     "CARDReadsGeneKmerAnalysisDirectoryFormat",
     "CARDReadsAlleleKmerAnalysisDirectoryFormat",
+    "CARDDatabase",
+    "CARDKmerDatabase",
+    "CARDAnnotation",
+    "CARDAlleleAnnotation",
+    "CARDGeneAnnotation",
+    "CARDReadsGeneKmerAnalysis",
+    "CARDReadsAlleleKmerAnalysis",
+    "CARDMAGsKmerAnalysis",
 ]

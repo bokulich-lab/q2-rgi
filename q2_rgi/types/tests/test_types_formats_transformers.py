@@ -24,12 +24,12 @@ from q2_types.genome_data import GenesDirectoryFormat, ProteinsDirectoryFormat
 from qiime2.plugin.testing import TestPluginBase
 from skbio import DNA, Protein
 
-from q2_amr.types import (
+from q2_rgi.types import (
     CARDAlleleAnnotationDirectoryFormat,
     CARDDatabaseDirectoryFormat,
     CARDGeneAnnotationDirectoryFormat,
 )
-from q2_amr.types._format import (
+from q2_rgi.types._format import (
     CARDAnnotationDirectoryFormat,
     CARDAnnotationTXTFormat,
     CARDDatabaseFormat,
@@ -47,7 +47,7 @@ from q2_amr.types._format import (
     CARDWildcardIndexFormat,
     GapDNAFASTAFormat,
 )
-from q2_amr.types._transformer import (
+from q2_rgi.types._transformer import (
     _read_from_card_file,
     card_annotation_df_to_fasta,
     extract_sequence,
@@ -56,11 +56,11 @@ from q2_amr.types._transformer import (
 
 
 class AMRTypesTestPluginBase(TestPluginBase):
-    package = "q2_amr.types.tests"
+    package = "q2_rgi.types.tests"
 
     def setUp(self):
         super().setUp()
-        self.temp_dir = tempfile.TemporaryDirectory(prefix="q2-amr-test-temp-")
+        self.temp_dir = tempfile.TemporaryDirectory(prefix="q2-rgi-test-temp-")
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -69,7 +69,9 @@ class AMRTypesTestPluginBase(TestPluginBase):
         return pkg_resources.resource_filename(self.package, "data/%s" % filename)
 
 
-class TestCARDDatabaseTypesAndFormats(AMRTypesTestPluginBase):
+class TestCARDDatabaseTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_card_database_format_validate_positive(self):
         filepath = self.get_data_path("card_test.json")
         format = CARDDatabaseFormat(filepath, mode="r")

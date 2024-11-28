@@ -2,7 +2,7 @@ import os
 
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_amr.card.partition import (
+from q2_rgi.card.partition import (
     collate_mags_annotations,
     collate_mags_kmer_analyses,
     collate_reads_allele_annotations,
@@ -13,7 +13,7 @@ from q2_amr.card.partition import (
     partition_reads_allele_annotations,
     partition_reads_gene_annotations,
 )
-from q2_amr.types import (
+from q2_rgi.types import (
     CARDAlleleAnnotationDirectoryFormat,
     CARDAnnotationDirectoryFormat,
     CARDGeneAnnotationDirectoryFormat,
@@ -24,7 +24,7 @@ from q2_amr.types import (
 
 
 class TestPartition(TestPluginBase):
-    package = "q2_amr.card.tests"
+    package = "q2_rgi.card.tests"
 
     def test_collate_mags_annotations(self):
         # Test collate for mags annotations

@@ -7,8 +7,8 @@ import tempfile
 import warnings
 from pathlib import Path
 
-from q2_amr.card.utils import load_card_db, run_command
-from q2_amr.types import (
+from q2_rgi.card.utils import load_card_db, run_command
+from q2_rgi.types import (
     CARDAlleleAnnotationDirectoryFormat,
     CARDAnnotationDirectoryFormat,
     CARDDatabaseDirectoryFormat,

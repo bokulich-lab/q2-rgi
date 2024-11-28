@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_amr.card.kmer import (
+from q2_rgi.card.kmer import (
     _kmer_query_mags,
     _kmer_query_reads,
     _run_rgi_kmer_query,
@@ -15,7 +15,7 @@ from q2_amr.card.kmer import (
     kmer_query_reads_card,
     run_rgi_kmer_build,
 )
-from q2_amr.types import (
+from q2_rgi.types import (
     CARDAlleleAnnotationDirectoryFormat,
     CARDAnnotationDirectoryFormat,
     CARDDatabaseDirectoryFormat,
@@ -27,7 +27,7 @@ from q2_amr.types import (
 
 
 class TestKmer(TestPluginBase):
-    package = "q2_amr.card.tests"
+    package = "q2_rgi.card.tests"
 
     @classmethod
     def setUpClass(cls):
@@ -81,8 +81,8 @@ class TestKmer(TestPluginBase):
 
         # Patch _run_rgi_kmer_query and load_card_db functions
         with pytest.warns(UserWarning, match=warning), patch(
-            "q2_amr.card.kmer._run_rgi_kmer_query", side_effect=mock_run_rgi_kmer_query
-        ), patch("q2_amr.card.kmer.load_card_db", return_value="61"):
+            "q2_rgi.card.kmer._run_rgi_kmer_query", side_effect=mock_run_rgi_kmer_query
+        ), patch("q2_rgi.card.kmer.load_card_db", return_value="61"):
             # Run _kmer_query_reads or _kmer_query_mags
             result = query_function(card_db, kmer_db, amr_annotations)
 
@@ -126,7 +126,7 @@ class TestKmer(TestPluginBase):
         )
 
     def test__run_rgi_kmer_query(self):
-        with patch("q2_amr.card.kmer.run_command") as mock_run_command:
+        with patch("q2_rgi.card.kmer.run_command") as mock_run_command:
             _run_rgi_kmer_query(
                 tmp="path_tmp",
                 input_file="path_input_file",
@@ -217,7 +217,7 @@ class TestKmer(TestPluginBase):
             "An error was encountered while running rgi, "
             "(return code 1), please inspect stdout and stderr to learn more."
         )
-        with patch("q2_amr.card.kmer.run_command") as mock_run_command:
+        with patch("q2_rgi.card.kmer.run_command") as mock_run_command:
             mock_run_command.side_effect = subprocess.CalledProcessError(1, "cmd")
             with self.assertRaises(Exception) as cm:
                 _run_rgi_kmer_query(
@@ -228,8 +228,8 @@ class TestKmer(TestPluginBase):
     def test_kmer_build_card(self):
         mock_run_rgi_kmer_build = MagicMock(side_effect=self.copy_kmer_build_files)
         with patch(
-            "q2_amr.card.kmer.run_rgi_kmer_build", side_effect=mock_run_rgi_kmer_build
-        ), patch("q2_amr.card.kmer.load_card_db"), patch("glob.glob"):
+            "q2_rgi.card.kmer.run_rgi_kmer_build", side_effect=mock_run_rgi_kmer_build
+        ), patch("q2_rgi.card.kmer.load_card_db"), patch("glob.glob"):
             card_db = CARDDatabaseDirectoryFormat()
             result = kmer_build_card(card_db=card_db, kmer_size=32)
 
@@ -248,7 +248,7 @@ class TestKmer(TestPluginBase):
             shutil.copy(self.get_data_path(scr_file), os.path.join(tmp, des_file))
 
     def test_run_rgi_kmer_build(self):
-        with patch("q2_amr.card.kmer.run_command") as mock_run_command:
+        with patch("q2_rgi.card.kmer.run_command") as mock_run_command:
             run_rgi_kmer_build(
                 tmp="path_tmp",
                 input_directory="path_directory",

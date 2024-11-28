@@ -6,18 +6,18 @@ from unittest.mock import call, patch
 import pandas as pd
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_amr.card.utils import (
+from q2_rgi.card.utils import (
     colorify,
     copy_files,
     create_count_table,
     load_card_db,
     read_in_txt,
 )
-from q2_amr.types import CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFormat
+from q2_rgi.types import CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFormat
 
 
 class TestAnnotateReadsCARD(TestPluginBase):
-    package = "q2_amr.card.tests"
+    package = "q2_rgi.card.tests"
 
     @classmethod
     def setUpClass(cls):
@@ -76,7 +76,7 @@ class TestAnnotateReadsCARD(TestPluginBase):
             shutil.copy(self.get_data_path(src), os.path.join(str(dir), des))
 
         # Patch run_command
-        with patch("q2_amr.card.utils.run_command") as mock_run_command:
+        with patch("q2_rgi.card.utils.run_command") as mock_run_command:
             # Run load_card_db two times with include_other_models set to True and False
             for parameters in [False, True]:
                 kmer_size = load_card_db(
@@ -135,7 +135,7 @@ class TestAnnotateReadsCARD(TestPluginBase):
             "(return code 1), please inspect stdout and stderr to learn more."
         )
         with patch(
-            "q2_amr.card.utils.run_command"
+            "q2_rgi.card.utils.run_command"
         ) as mock_run_command, self.assertRaises(Exception) as cm:
             mock_run_command.side_effect = subprocess.CalledProcessError(1, "cmd")
             load_card_db()

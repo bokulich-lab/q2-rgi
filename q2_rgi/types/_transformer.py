@@ -18,7 +18,7 @@ from q2_types.feature_data._transformer import ProteinIterator
 from q2_types.genome_data import GenesDirectoryFormat, ProteinsDirectoryFormat
 from skbio import DNA, Protein
 
-from q2_amr.types import CARDAnnotationDirectoryFormat
+from q2_rgi.types import CARDAnnotationDirectoryFormat
 
 from ..plugin_setup import plugin
 from ._format import (

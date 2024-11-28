@@ -8,8 +8,8 @@ from distutils.dir_util import copy_tree
 import pkg_resources
 import q2templates
 
-from q2_amr.card.utils import run_command
-from q2_amr.types import CARDAnnotationDirectoryFormat
+from q2_rgi.card.utils import run_command
+from q2_rgi.types import CARDAnnotationDirectoryFormat
 
 
 def heatmap(
@@ -20,7 +20,7 @@ def heatmap(
     display: str = "plain",
     frequency: bool = False,
 ):
-    TEMPLATES = pkg_resources.resource_filename("q2_amr", "assets")
+    TEMPLATES = pkg_resources.resource_filename("q2_rgi", "assets")
     annotation_dir = str(amr_annotation)
     with tempfile.TemporaryDirectory() as tmp:
         # Create directories for the JSON annotation files and the heatmap output files

@@ -6,12 +6,12 @@ from unittest.mock import MagicMock, patch
 from q2_types.per_sample_sequences import MultiMAGSequencesDirFmt
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_amr.card.mags import annotate_mags_card, run_rgi_main
-from q2_amr.types import CARDAnnotationDirectoryFormat, CARDDatabaseDirectoryFormat
+from q2_rgi.card.mags import annotate_mags_card, run_rgi_main
+from q2_rgi.types import CARDAnnotationDirectoryFormat, CARDDatabaseDirectoryFormat
 
 
 class TestAnnotateMagsCard(TestPluginBase):
-    package = "q2_amr.card.tests"
+    package = "q2_rgi.card.tests"
 
     def mock_run_rgi_main(
         self,
@@ -38,11 +38,11 @@ class TestAnnotateMagsCard(TestPluginBase):
         mock_create_count_table = MagicMock()
         mock_read_in_txt = MagicMock()
         with patch(
-            "q2_amr.card.mags.run_rgi_main", side_effect=self.mock_run_rgi_main
-        ), patch("q2_amr.card.mags.load_card_db"), patch(
-            "q2_amr.card.mags.read_in_txt", mock_read_in_txt
+            "q2_rgi.card.mags.run_rgi_main", side_effect=self.mock_run_rgi_main
+        ), patch("q2_rgi.card.mags.load_card_db"), patch(
+            "q2_rgi.card.mags.read_in_txt", mock_read_in_txt
         ), patch(
-            "q2_amr.card.mags.create_count_table", mock_create_count_table
+            "q2_rgi.card.mags.create_count_table", mock_create_count_table
         ):
             result = annotate_mags_card(mag, card_db)
             self.assertIsInstance(result[0], CARDAnnotationDirectoryFormat)
@@ -62,7 +62,7 @@ class TestAnnotateMagsCard(TestPluginBase):
             )
 
     def test_run_rgi_main(self):
-        with patch("q2_amr.card.mags.run_command") as mock_run_command:
+        with patch("q2_rgi.card.mags.run_command") as mock_run_command:
             run_rgi_main("path_tmp", "path_input", "DIAMOND", True, True, True, True, 8)
             mock_run_command.assert_called_once_with(
                 [
@@ -94,7 +94,7 @@ class TestAnnotateMagsCard(TestPluginBase):
         )
         tmp = "path/to/tmp"
         input_sequence = "path/to/input_sequence.fasta"
-        with patch("q2_amr.card.mags.run_command") as mock_run_command:
+        with patch("q2_rgi.card.mags.run_command") as mock_run_command:
             mock_run_command.side_effect = subprocess.CalledProcessError(1, "cmd")
             with self.assertRaises(Exception) as cm:
                 run_rgi_main(tmp, input_sequence)

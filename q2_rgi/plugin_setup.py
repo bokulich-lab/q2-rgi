@@ -27,18 +27,18 @@ from qiime2.core.type import (
 )
 from qiime2.plugin import Citations, Plugin
 
-from q2_amr import __version__
-from q2_amr.card.database import fetch_card_db
-from q2_amr.card.heatmap import heatmap
-from q2_amr.card.kmer import (
+from q2_rgi import __version__
+from q2_rgi.card.database import fetch_card_db
+from q2_rgi.card.heatmap import heatmap
+from q2_rgi.card.kmer import (
     _kmer_query_mags,
     _kmer_query_reads,
     kmer_build_card,
     kmer_query_mags_card,
     kmer_query_reads_card,
 )
-from q2_amr.card.mags import annotate_mags_card
-from q2_amr.card.partition import (
+from q2_rgi.card.mags import annotate_mags_card
+from q2_rgi.card.partition import (
     collate_mags_annotations,
     collate_mags_kmer_analyses,
     collate_reads_allele_annotations,
@@ -49,15 +49,15 @@ from q2_amr.card.partition import (
     partition_reads_allele_annotations,
     partition_reads_gene_annotations,
 )
-from q2_amr.card.reads import _annotate_reads_card, annotate_reads_card
-from q2_amr.types import (
+from q2_rgi.card.reads import _annotate_reads_card, annotate_reads_card
+from q2_rgi.types import (
     CARDAnnotationJSONFormat,
     CARDAnnotationTXTFormat,
     CARDDatabase,
     CARDDatabaseDirectoryFormat,
     CARDDatabaseFormat,
 )
-from q2_amr.types._format import (
+from q2_rgi.types._format import (
     CARDAlleleAnnotationDirectoryFormat,
     CARDAlleleAnnotationFormat,
     CARDAnnotationDirectoryFormat,
@@ -78,7 +78,7 @@ from q2_amr.types._format import (
     CARDWildcardIndexFormat,
     GapDNAFASTAFormat,
 )
-from q2_amr.types._type import (
+from q2_rgi.types._type import (
     CARDAlleleAnnotation,
     CARDAnnotation,
     CARDGeneAnnotation,
@@ -88,13 +88,13 @@ from q2_amr.types._type import (
     CARDReadsGeneKmerAnalysis,
 )
 
-citations = Citations.load("citations.bib", package="q2_amr")
+citations = Citations.load("citations.bib", package="q2_rgi")
 
 plugin = Plugin(
     name="amr",
     version=__version__,
-    website="https://github.com/bokulich-lab/q2-amr",
-    package="q2_amr",
+    website="https://github.com/bokulich-lab/q2-rgi",
+    package="q2_rgi",
     description="This is a QIIME 2 plugin that annotates sequence data with "
     "antimicrobial resistance gene information from CARD.",
     short_description="This is a QIIME 2 plugin that annotates sequence "
@@ -1133,4 +1133,4 @@ plugin.register_formats(
     CARDReadsAlleleKmerAnalysisDirectoryFormat,
 )
 
-importlib.import_module("q2_amr.types._transformer")
+importlib.import_module("q2_rgi.types._transformer")

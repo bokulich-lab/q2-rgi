@@ -4,17 +4,17 @@ from unittest.mock import patch
 
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_amr.card.heatmap import (
+from q2_rgi.card.heatmap import (
     InvalidParameterCombinationError,
     change_names,
     heatmap,
     run_rgi_heatmap,
 )
-from q2_amr.types import CARDAnnotationDirectoryFormat
+from q2_rgi.types import CARDAnnotationDirectoryFormat
 
 
 class TestHeatmap(TestPluginBase):
-    package = "q2_amr.card.tests"
+    package = "q2_rgi.card.tests"
 
     def test_heatmap(self):
         amr_annotation = CARDAnnotationDirectoryFormat()
@@ -28,7 +28,7 @@ class TestHeatmap(TestPluginBase):
                     file.write(file_type)
 
         with patch(
-            "q2_amr.card.heatmap.run_rgi_heatmap", side_effect=mock_run_rgi_heatmap
+            "q2_rgi.card.heatmap.run_rgi_heatmap", side_effect=mock_run_rgi_heatmap
         ), tempfile.TemporaryDirectory() as tmp:
             os.makedirs(os.path.join(tmp, "results"))
             heatmap(tmp, amr_annotation)
@@ -45,7 +45,7 @@ class TestHeatmap(TestPluginBase):
             self.assertTrue(os.path.exists(os.path.join(tmp, "q2templateassets")))
 
     def test_run_rgi_heatmap(self):
-        with patch("q2_amr.card.heatmap.run_command") as mock_run_command:
+        with patch("q2_rgi.card.heatmap.run_command") as mock_run_command:
             run_rgi_heatmap(
                 "path_tmp", "json_files_dir_path", "samples", "drug_class", "fill", True
             )
@@ -71,9 +71,9 @@ class TestHeatmap(TestPluginBase):
 
     def test_change_names(self):
         with patch(
-            "q2_amr.card.heatmap.os.listdir",
+            "q2_rgi.card.heatmap.os.listdir",
             return_value=["heatmap-7.eps", "heatmap-7.png", "heatmap-7.csv"],
-        ), patch("q2_amr.card.heatmap.os.rename") as mock_rename:
+        ), patch("q2_rgi.card.heatmap.os.rename") as mock_rename:
             results_dir = "/path/to/results"
             change_names(results_dir)
             expected_calls = [
@@ -85,8 +85,8 @@ class TestHeatmap(TestPluginBase):
             self.assertEqual(expected_calls, actual_calls)
 
     def test_change_names_empty(self):
-        with patch("q2_amr.card.heatmap.os.listdir", return_value=[]), patch(
-            "q2_amr.card.heatmap.os.rename"
+        with patch("q2_rgi.card.heatmap.os.listdir", return_value=[]), patch(
+            "q2_rgi.card.heatmap.os.rename"
         ) as mock_rename:
             results_dir = "/path/to/results"
             change_names(results_dir)

@@ -9,8 +9,8 @@ import tempfile
 import requests
 from tqdm import tqdm
 
-from q2_amr.card.utils import colorify, run_command
-from q2_amr.types._format import (
+from q2_rgi.card.utils import colorify, run_command
+from q2_rgi.types._format import (
     CARDDatabaseDirectoryFormat,
     CARDKmerDatabaseDirectoryFormat,
 )

@@ -7,12 +7,12 @@ from unittest.mock import MagicMock, patch
 import requests
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_amr.card.database import download_with_progress_bar, fetch_card_db, preprocess
-from q2_amr.types import CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFormat
+from q2_rgi.card.database import download_with_progress_bar, fetch_card_db, preprocess
+from q2_rgi.types import CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFormat
 
 
 class TestAnnotateMagsCard(TestPluginBase):
-    package = "q2_amr.card.tests"
+    package = "q2_rgi.card.tests"
 
     def mock_preprocess(self, dir, operation):
         if operation == "card":
@@ -36,8 +36,8 @@ class TestAnnotateMagsCard(TestPluginBase):
         wildcard_tar = self.get_data_path("wildcard_data.tar.bz2")
 
         # Patch requests.get,
-        with patch("q2_amr.card.database.download_with_progress_bar"), patch(
-            "q2_amr.card.database.preprocess", side_effect=self.mock_preprocess
+        with patch("q2_rgi.card.database.download_with_progress_bar"), patch(
+            "q2_rgi.card.database.preprocess", side_effect=self.mock_preprocess
         ), patch(
             "tarfile.open",
             side_effect=[tarfile.open(card_tar), tarfile.open(wildcard_tar)],
@@ -74,7 +74,7 @@ class TestAnnotateMagsCard(TestPluginBase):
     def test_connection_error(self):
         # Simulate a ConnectionError during requests.get
         with patch(
-            "q2_amr.card.database.download_with_progress_bar",
+            "q2_rgi.card.database.download_with_progress_bar",
             side_effect=requests.ConnectionError,
         ), self.assertRaisesRegex(
             requests.ConnectionError,
@@ -85,14 +85,14 @@ class TestAnnotateMagsCard(TestPluginBase):
     def test_tarfile_read_error(self):
         # Simulate a tarfile.ReadError during tarfile.open
         with patch("tarfile.open", side_effect=tarfile.ReadError), patch(
-            "q2_amr.card.database.download_with_progress_bar"
+            "q2_rgi.card.database.download_with_progress_bar"
         ), self.assertRaisesRegex(tarfile.ReadError, "Tarfile is invalid."):
             fetch_card_db()
 
     def test_subprocess_error(self):
         # Simulate a subprocess.CalledProcessError during run_command
         with patch(
-            "q2_amr.card.database.run_command",
+            "q2_rgi.card.database.run_command",
             side_effect=subprocess.CalledProcessError(1, "cmd"),
         ), self.assertRaisesRegex(
             Exception,
@@ -104,7 +104,7 @@ class TestAnnotateMagsCard(TestPluginBase):
     def test_preprocess_card(self):
         # Ensure preprocess calls run_command with the correct arguments for "card"
         # operation
-        with patch("q2_amr.card.database.run_command") as mock_run_command:
+        with patch("q2_rgi.card.database.run_command") as mock_run_command:
             preprocess("path_tmp", "card")
             mock_run_command.assert_called_once_with(
                 ["rgi", "card_annotation", "-i", "card/card.json"],
@@ -115,7 +115,7 @@ class TestAnnotateMagsCard(TestPluginBase):
     def test_preprocess_wildcard(self):
         # Ensure preprocess calls run_command with the correct arguments for "wildcard"
         # operation
-        with patch("q2_amr.card.database.run_command") as mock_run_command:
+        with patch("q2_rgi.card.database.run_command") as mock_run_command:
             preprocess("path_tmp", "wildcard")
             mock_run_command.assert_called_once_with(
                 [
@@ -138,7 +138,7 @@ class TestAnnotateMagsCard(TestPluginBase):
         tar_path = "/path/to/downloaded/file.tar"
 
         with patch("requests.get") as mock_get, patch(
-            "q2_amr.card.database.tqdm"
+            "q2_rgi.card.database.tqdm"
         ) as mock_tqdm, patch("builtins.open") as mock_open:
             # Mock response object
             response_mock = MagicMock()

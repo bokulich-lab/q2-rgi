@@ -2,7 +2,7 @@
 {% set version = data.get('version') or 'placehold' %}
 
 package:
-  name: q2-amr
+  name: q2-rgi
   version: {{ version }}
 
 source:
@@ -32,12 +32,12 @@ test:
     - coverage
     - pytest-cov
   imports:
-    - q2_amr
+    - q2_rgi
     - qiime2.plugins.amr
   commands:
-    - pytest --cov q2_amr --cov-report xml:coverage.xml --pyargs q2_amr
+    - pytest --cov q2_rgi --cov-report xml:coverage.xml --pyargs q2_rgi
 
 about:
-  home: https://github.com/bokulich-lab/q2-amr
+  home: https://github.com/bokulich-lab/q2-rgi
   license: BSD-3-Clause
   license_family: BSD

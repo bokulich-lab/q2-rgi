@@ -10,8 +10,8 @@ from q2_types.per_sample_sequences import (
 from qiime2 import Artifact
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_amr.card.reads import _annotate_reads_card, annotate_reads_card, run_rgi_bwt
-from q2_amr.types import (
+from q2_rgi.card.reads import _annotate_reads_card, annotate_reads_card, run_rgi_bwt
+from q2_rgi.types import (
     CARDAlleleAnnotationDirectoryFormat,
     CARDDatabaseDirectoryFormat,
     CARDGeneAnnotationDirectoryFormat,
@@ -19,7 +19,7 @@ from q2_amr.types import (
 
 
 class TestAnnotateReadsCARD(TestPluginBase):
-    package = "q2_amr.card.tests"
+    package = "q2_rgi.card.tests"
 
     @classmethod
     def setUpClass(cls):
@@ -74,10 +74,10 @@ class TestAnnotateReadsCARD(TestPluginBase):
 
         # Patch run_rgi_bwt, run_rgi_load, read_in_txt and create_count_table functions
         # and assign MagicMock objects
-        with patch("q2_amr.card.reads.run_rgi_bwt", mock_run_rgi_bwt), patch(
-            "q2_amr.card.reads.load_card_db", mock_run_rgi_load
-        ), patch("q2_amr.card.reads.read_in_txt", mock_read_in_txt), patch(
-            "q2_amr.card.reads.create_count_table", mock_create_count_table
+        with patch("q2_rgi.card.reads.run_rgi_bwt", mock_run_rgi_bwt), patch(
+            "q2_rgi.card.reads.load_card_db", mock_run_rgi_load
+        ), patch("q2_rgi.card.reads.read_in_txt", mock_read_in_txt), patch(
+            "q2_rgi.card.reads.create_count_table", mock_create_count_table
         ):
             # Run _annotate_reads_card function
             result = _annotate_reads_card(reads, card_db)
@@ -153,7 +153,7 @@ class TestAnnotateReadsCARD(TestPluginBase):
                         )
 
     def test_run_rgi_bwt(self):
-        with patch("q2_amr.card.reads.run_command") as mock_run_command:
+        with patch("q2_rgi.card.reads.run_command") as mock_run_command:
             run_rgi_bwt(
                 "path_tmp",
                 "sample1",
@@ -193,7 +193,7 @@ class TestAnnotateReadsCARD(TestPluginBase):
         )
 
         with patch(
-            "q2_amr.card.reads.run_command"
+            "q2_rgi.card.reads.run_command"
         ) as mock_run_command, self.assertRaises(Exception) as cm:
             mock_run_command.side_effect = subprocess.CalledProcessError(1, "cmd")
             run_rgi_bwt()
