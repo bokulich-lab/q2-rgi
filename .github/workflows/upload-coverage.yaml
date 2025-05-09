@@ -60,5 +60,7 @@ jobs:
           files: ./coverage.xml
           fail_ci_if_error: true
           override_pr: ${{ steps.pr.outputs.result }}
+          override_commit: ${{ github.event.workflow_run.head_sha }}
+          verbose: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
