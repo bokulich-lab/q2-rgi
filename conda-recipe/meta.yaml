@@ -1,0 +1,44 @@
+package:
+  name: q2-rgi
+  version: {{ PLUGIN_VERSION }}
+
+source:
+  path: ..
+
+build:
+  script: make install
+
+requirements:
+  host:
+    - python {{ python }}
+    - setuptools
+    - versioningit
+    - wheel
+
+  build:
+    - setuptools
+    - versioningit
+
+  run:
+    - qiime2 >={{ qiime2 }}
+    - q2-demux >={{ q2-demux }}
+    - q2-feature-table >={{ q2-feature-table }}
+    - q2-types >={{ q2-types }}
+    - q2templates >={{ q2templates }}
+    - q2cli >={{ q2cli }}
+    - rgi
+    - tqdm
+
+test:
+  requires:
+    - coverage
+    - pytest-cov
+    - parameterized
+  imports:
+    - q2_rgi
+    - qiime2.plugins.rgi
+  commands:
+    - - pytest --pyargs q2_rgi
+
+about:
+  home: https://github.com/bokulich-lab/q2-rgi
