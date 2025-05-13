@@ -16,6 +16,7 @@ requirements:
     - wheel
 
   build:
+    - python {{ python }}
     - setuptools
     - versioningit
 
@@ -31,8 +32,6 @@ requirements:
 
 test:
   requires:
-    - coverage
-    - pytest-cov
     - parameterized
   imports:
     - q2_rgi
@@ -42,3 +41,5 @@ test:
 
 about:
   home: https://github.com/bokulich-lab/q2-rgi
+  license: BSD-3-Clause
+  license_family: BSD
