@@ -22,11 +22,10 @@ requirements:
 
   run:
     - qiime2 >={{ qiime2 }}
-    - q2-demux >={{ q2-demux }}
-    - q2-feature-table >={{ q2-feature-table }}
-    - q2-types >={{ q2-types }}
+    - q2-demux >={{ q2_demux }}
+    - q2-feature-table >={{ q2_feature_table }}
+    - q2-types >={{ q2_types }}
     - q2templates >={{ q2templates }}
-    - q2cli >={{ q2cli }}
     - rgi
     - tqdm
 
