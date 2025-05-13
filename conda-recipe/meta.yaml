@@ -37,7 +37,7 @@ test:
     - q2_rgi
     - qiime2.plugins.rgi
   commands:
-    - - pytest --pyargs q2_rgi
+    - pytest --pyargs q2_rgi
 
 about:
   home: https://github.com/bokulich-lab/q2-rgi
