@@ -8,10 +8,8 @@
 import json
 import os
 import shutil
-import tempfile
 
 import pandas as pd
-import pkg_resources
 import qiime2
 from Bio import SeqIO
 from q2_types.feature_data import (
@@ -53,20 +51,6 @@ from q2_rgi.types._transformer import (
     extract_sequence,
     tabulate_data,
 )
-
-
-class AMRTypesTestPluginBase(TestPluginBase):
-    package = "q2_rgi.types.tests"
-
-    def setUp(self):
-        super().setUp()
-        self.temp_dir = tempfile.TemporaryDirectory(prefix="q2-rgi-test-temp-")
-
-    def tearDown(self):
-        self.temp_dir.cleanup()
-
-    def get_data_path(self, filename):
-        return pkg_resources.resource_filename(self.package, "data/%s" % filename)
 
 
 class TestCARDDatabaseTypesAndFormats(TestPluginBase):
@@ -224,7 +208,9 @@ class TestCARDDatabaseTypesAndFormats(TestPluginBase):
         self.assertIsInstance(generator, ProteinIterator)
 
 
-class TestCARDCARDKmerDirectoryTypesAndFormats(AMRTypesTestPluginBase):
+class TestCARDCARDKmerDirectoryTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_kmer_txt_format_validate_positive(self):
         filepath = self.get_data_path("kmer_txt_test.txt")
         format = CARDKmerTXTFormat(filepath, mode="r")
@@ -248,7 +234,9 @@ class TestCARDCARDKmerDirectoryTypesAndFormats(AMRTypesTestPluginBase):
         format.validate()
 
 
-class TestCARDMagsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
+class TestCARDMagsAnnotationTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_df_to_card_annotation_format_transformer(self):
         filepath = self.get_data_path("rgi_output.txt")
         transformer = self.get_transformer(pd.DataFrame, CARDAnnotationTXTFormat)
@@ -398,7 +386,9 @@ class TestCARDMagsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
         self.assertEqual(obs, exp)
 
 
-class TestCARDReadsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
+class TestCARDReadsAnnotationTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_CARDGeneAnnotationDirectoryFormat_to_qiime2_Metadata_transformer(self):
         transformer = self.get_transformer(
             CARDGeneAnnotationDirectoryFormat, qiime2.Metadata
@@ -450,7 +440,9 @@ class TestCARDReadsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
         self.assertEqual(obs, exp)
 
 
-class TestKmerTypesAndFormats(AMRTypesTestPluginBase):
+class TestKmerTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_card_mags_kmer_analysis_validate_positive(self):
         filepath = self.get_data_path("61mer_analysis_rgi_summary.txt")
         format = CARDMAGsKmerAnalysisFormat(filepath, mode="r")
