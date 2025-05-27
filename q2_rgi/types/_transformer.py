@@ -13,8 +13,12 @@ import shutil
 import pandas as pd
 import qiime2
 import skbio
-from q2_types.feature_data import DNAFASTAFormat, DNAIterator, ProteinFASTAFormat
-from q2_types.feature_data._transformer import ProteinIterator
+from q2_types.feature_data import (
+    DNAFASTAFormat,
+    DNAIterator,
+    ProteinFASTAFormat,
+    ProteinIterator,
+)
 from q2_types.genome_data import GenesDirectoryFormat, ProteinsDirectoryFormat
 from skbio import DNA, Protein
 

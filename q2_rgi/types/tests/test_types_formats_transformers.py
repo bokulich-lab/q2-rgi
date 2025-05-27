@@ -8,10 +8,8 @@
 import json
 import os
 import shutil
-import tempfile
 
 import pandas as pd
-import pkg_resources
 import qiime2
 from Bio import SeqIO
 from q2_types.feature_data import (
@@ -21,6 +19,7 @@ from q2_types.feature_data import (
     ProteinIterator,
 )
 from q2_types.genome_data import GenesDirectoryFormat, ProteinsDirectoryFormat
+from qiime2.core.exceptions import ValidationError
 from qiime2.plugin.testing import TestPluginBase
 from skbio import DNA, Protein
 
@@ -30,9 +29,13 @@ from q2_rgi.types import (
     CARDGeneAnnotationDirectoryFormat,
 )
 from q2_rgi.types._format import (
+    CARDAlleleAnnotationFormat,
     CARDAnnotationDirectoryFormat,
+    CARDAnnotationJSONFormat,
+    CARDAnnotationStatsFormat,
     CARDAnnotationTXTFormat,
     CARDDatabaseFormat,
+    CARDGeneAnnotationFormat,
     CARDKmerDatabaseDirectoryFormat,
     CARDKmerJSONFormat,
     CARDKmerTXTFormat,
@@ -53,20 +56,6 @@ from q2_rgi.types._transformer import (
     extract_sequence,
     tabulate_data,
 )
-
-
-class AMRTypesTestPluginBase(TestPluginBase):
-    package = "q2_rgi.types.tests"
-
-    def setUp(self):
-        super().setUp()
-        self.temp_dir = tempfile.TemporaryDirectory(prefix="q2-rgi-test-temp-")
-
-    def tearDown(self):
-        self.temp_dir.cleanup()
-
-    def get_data_path(self, filename):
-        return pkg_resources.resource_filename(self.package, "data/%s" % filename)
 
 
 class TestCARDDatabaseTypesAndFormats(TestPluginBase):
@@ -224,7 +213,9 @@ class TestCARDDatabaseTypesAndFormats(TestPluginBase):
         self.assertIsInstance(generator, ProteinIterator)
 
 
-class TestCARDCARDKmerDirectoryTypesAndFormats(AMRTypesTestPluginBase):
+class TestCARDCARDKmerDirectoryTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_kmer_txt_format_validate_positive(self):
         filepath = self.get_data_path("kmer_txt_test.txt")
         format = CARDKmerTXTFormat(filepath, mode="r")
@@ -248,7 +239,9 @@ class TestCARDCARDKmerDirectoryTypesAndFormats(AMRTypesTestPluginBase):
         format.validate()
 
 
-class TestCARDMagsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
+class TestCARDMagsAnnotationTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_df_to_card_annotation_format_transformer(self):
         filepath = self.get_data_path("rgi_output.txt")
         transformer = self.get_transformer(pd.DataFrame, CARDAnnotationTXTFormat)
@@ -397,8 +390,40 @@ class TestCARDMagsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
 
         self.assertEqual(obs, exp)
 
+    def test_card_annotation_txt_format_validate_positive(self):
+        filepath = self.get_data_path(
+            "card_annotation/sample1/e026af61-d911-4de3-a957-7e8bf837f30d/"
+            "amr_annotation.txt"
+        )
+        format = CARDAnnotationTXTFormat(filepath, mode="r")
+        format.validate()
 
-class TestCARDReadsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
+    def test_card_annotation_txt_format_validate_negative(self):
+        filepath = self.get_data_path(
+            "card_allele_annotation/sample1/allele_mapping_data.txt"
+        )
+        format = CARDAnnotationTXTFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "CARDAnnotationTXTFormat"):
+            format.validate()
+
+    def test_card_annotation_json_format_validate_positive(self):
+        filepath = self.get_data_path(
+            "card_annotation/sample1/e026af61-d911-4de3-a957-7e8bf837f30d/"
+            "amr_annotation.json"
+        )
+        format = CARDAnnotationJSONFormat(filepath, mode="r")
+        format.validate()
+
+    def test_card_annotation_json_format_validate_negative(self):
+        filepath = self.get_data_path("amr_annotation_invalid.json")
+        format = CARDAnnotationJSONFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "CARDAnnotation"):
+            format.validate()
+
+
+class TestCARDReadsAnnotationTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_CARDGeneAnnotationDirectoryFormat_to_qiime2_Metadata_transformer(self):
         transformer = self.get_transformer(
             CARDGeneAnnotationDirectoryFormat, qiime2.Metadata
@@ -449,8 +474,53 @@ class TestCARDReadsAnnotationTypesAndFormats(AMRTypesTestPluginBase):
         }
         self.assertEqual(obs, exp)
 
+    def test_card_allele_annotation_validate_positive(self):
+        filepath = self.get_data_path(
+            "card_allele_annotation/sample1/allele_mapping_data.txt"
+        )
+        format = CARDAlleleAnnotationFormat(filepath, mode="r")
+        format.validate()
 
-class TestKmerTypesAndFormats(AMRTypesTestPluginBase):
+    def test_card_allele_annotation_validate_negative(self):
+        filepath = self.get_data_path(
+            "card_gene_annotation/sample1/gene_mapping_data.txt"
+        )
+        format = CARDAlleleAnnotationFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "CARDAlleleAnnotationFormat"):
+            format.validate()
+
+    def test_card_gene_annotation_validate_positive(self):
+        filepath = self.get_data_path(
+            "card_gene_annotation/sample1/gene_mapping_data.txt"
+        )
+        format = CARDGeneAnnotationFormat(filepath, mode="r")
+        format.validate()
+
+    def test_card_gene_annotation_validate_negative(self):
+        filepath = self.get_data_path("61mer_analysis.allele.txt")
+        format = CARDAlleleAnnotationFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "CARDAlleleAnnotationFormat"):
+            format.validate()
+
+    def test_card_annotation_stats_validate_positive(self):
+        filepath = self.get_data_path(
+            "card_allele_annotation/sample1/overall_mapping_stats.txt"
+        )
+        format = CARDAnnotationStatsFormat(filepath, mode="r")
+        format.validate()
+
+    def test_card_annotation_stats_validate_negative(self):
+        filepath = self.get_data_path(
+            "card_allele_annotation/sample1/allele_mapping_data.txt"
+        )
+        format = CARDAnnotationStatsFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "CARDAnnotationStatsFormat"):
+            format.validate()
+
+
+class TestKmerTypesAndFormats(TestPluginBase):
+    package = "q2_rgi.types.tests"
+
     def test_card_mags_kmer_analysis_validate_positive(self):
         filepath = self.get_data_path("61mer_analysis_rgi_summary.txt")
         format = CARDMAGsKmerAnalysisFormat(filepath, mode="r")

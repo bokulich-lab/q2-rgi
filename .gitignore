@@ -134,3 +134,11 @@ dmypy.json
 /q2_rgi/charts_testing.py
 /index.html
 /bwt_test_file.py
+
+# macOS
+.DS_Store
+
+# Ignore parsl dir
+runinfo
+# Version file from versioningit
+_version.py

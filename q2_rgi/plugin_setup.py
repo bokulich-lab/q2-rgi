@@ -91,7 +91,7 @@ from q2_rgi.types._type import (
 citations = Citations.load("citations.bib", package="q2_rgi")
 
 plugin = Plugin(
-    name="amr",
+    name="rgi",
     version=__version__,
     website="https://github.com/bokulich-lab/q2-rgi",
     package="q2_rgi",

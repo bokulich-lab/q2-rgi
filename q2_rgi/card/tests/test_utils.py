@@ -16,7 +16,7 @@ from q2_rgi.card.utils import (
 from q2_rgi.types import CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFormat
 
 
-class TestAnnotateReadsCARD(TestPluginBase):
+class TestUtilsCARD(TestPluginBase):
     package = "q2_rgi.card.tests"
 
     @classmethod
@@ -50,11 +50,11 @@ class TestAnnotateReadsCARD(TestPluginBase):
         cls.frequency_table = pd.DataFrame(
             {
                 "sample_id": ["sample1", "sample2"],
-                "mdtF": ["1", "0"],
-                "mgrA": ["1", "1"],
                 "OprN": ["1", "1"],
-                "mepA": ["1", "1"],
                 "mdtE": ["0", "1"],
+                "mdtF": ["1", "0"],
+                "mepA": ["1", "1"],
+                "mgrA": ["1", "1"],
             }
         )
         cls.frequency_table.set_index("sample_id", inplace=True)
