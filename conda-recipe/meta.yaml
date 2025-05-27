@@ -22,7 +22,7 @@ requirements:
 
   run:
     - qiime2 >={{ qiime2 }}
-    - q2-demux >=2025.4.0
+    - "q2-demux >=2025.4.0"
     - q2-feature-table >={{ q2_feature_table }}
     - q2-types >={{ q2_types }}
     - q2templates >={{ q2templates }}
