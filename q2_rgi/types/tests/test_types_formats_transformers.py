@@ -497,9 +497,7 @@ class TestCARDReadsAnnotationTypesAndFormats(TestPluginBase):
         format.validate()
 
     def test_card_gene_annotation_validate_negative(self):
-        filepath = self.get_data_path(
-            "card_allele_annotation/sample1/allele_mapping_data.txt"
-        )
+        filepath = self.get_data_path("61mer_analysis.allele.txt")
         format = CARDAlleleAnnotationFormat(filepath, mode="r")
         with self.assertRaisesRegex(ValidationError, "CARDAlleleAnnotationFormat"):
             format.validate()
