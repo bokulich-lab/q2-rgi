@@ -37,12 +37,12 @@ def annotate_reads_card(
     elif reads.type <= SampleData[PairedEndSequencesWithQuality]:
         partition_method = ctx.get_action("demux", "partition_samples_paired")
 
-    annotate = ctx.get_action("amr", "_annotate_reads_card")
+    annotate = ctx.get_action("rgi", "_annotate_reads_card")
 
     collate_allele_annotations = ctx.get_action(
-        "amr", "collate_reads_allele_annotations"
+        "rgi", "collate_reads_allele_annotations"
     )
-    collate_gene_annotations = ctx.get_action("amr", "collate_reads_gene_annotations")
+    collate_gene_annotations = ctx.get_action("rgi", "collate_reads_gene_annotations")
     merge_tables = ctx.get_action("feature-table", "merge")
 
     # Partition the reads
