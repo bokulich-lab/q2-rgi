@@ -11,7 +11,7 @@ dependencies:
   - q2cli
   # This resolves an issue with the qiime tab completion script that was introduced by
   # click 8.2.0.
-  # 
+  #
   # This pin can be removed for the next release.
   - click=8.1.8
   - rgi
