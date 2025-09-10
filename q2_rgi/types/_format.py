@@ -168,7 +168,7 @@ class CARDKmerDatabaseDirectoryFormat(model.DirectoryFormat):
 
 class CARDAnnotationTXTFormat(model.TextFileFormat):
     def _validate(self, n_records=None):
-        header_exp = [
+        header_exp = {
             "ORF_ID",
             "Contig",
             "Start",
@@ -194,14 +194,14 @@ class CARDAnnotationTXTFormat(model.TextFileFormat):
             "Model_ID",
             "Nudged",
             "Note",
-        ]
+        }
         df = pd.read_csv(str(self), sep="\t")
 
-        header_obs = list(df.columns)
-        if header_obs != header_exp:
+        header_obs = set(df.columns)
+        if not header_exp.issubset(header_obs):
             raise ValidationError(
-                "Header line does not match CARDAnnotation format. Must consist of "
-                "the following values: "
+                "Header line does not match CARDAnnotation format. Must at least "
+                "consist of the following values: "
                 + ", ".join(header_exp)
                 + ".\n\nFound instead: "
                 + ", ".join(header_obs)
