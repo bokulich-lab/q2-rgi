@@ -141,9 +141,9 @@ def extract_sequence(seq_type, key1, key2, db):
         strand = db[key1]["model_sequences"]["sequence"][key2]["dna_sequence"]["strand"]
         fmin = db[key1]["model_sequences"]["sequence"][key2]["dna_sequence"]["fmin"]
         fmax = db[key1]["model_sequences"]["sequence"][key2]["dna_sequence"]["fmax"]
-        sequence_object.metadata[
-            "id"
-        ] = f"gb|{accession}|{strand}|{fmin}-{fmax}|ARO:{aro}|{model_name}"
+        sequence_object.metadata["id"] = (
+            f"gb|{accession}|{strand}|{fmin}-{fmax}|ARO:{aro}|{model_name}"
+        )
     return sequence_object
 
 

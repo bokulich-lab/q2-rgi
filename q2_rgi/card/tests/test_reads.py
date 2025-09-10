@@ -96,9 +96,11 @@ class TestAnnotateReadsCARD(TestPluginBase):
                     include_other_models=False,
                     samp=f"sample{i}",
                     fwd=f"{reads}/sample{i}_00_L001_R1_001.fastq.gz",
-                    rev=None
-                    if read_type == "single"
-                    else f"{reads}/sample{i}_00_L001_R2_001.fastq.gz",
+                    rev=(
+                        None
+                        if read_type == "single"
+                        else f"{reads}/sample{i}_00_L001_R2_001.fastq.gz"
+                    ),
                 )
                 for i in range(1, 3)
             ]
@@ -143,9 +145,11 @@ class TestAnnotateReadsCARD(TestPluginBase):
             for num in [0, 1]:
                 map_type = "allele" if num == 0 else "gene"
                 files = [f"{map_type}_mapping_data.txt"]
-                files.extend(
-                    ["overall_mapping_stats.txt", "sorted.length_100.bam"]
-                ) if map_type == "allele" else None
+                (
+                    files.extend(["overall_mapping_stats.txt", "sorted.length_100.bam"])
+                    if map_type == "allele"
+                    else None
+                )
                 for samp in ["sample1", "sample2"]:
                     for file in files:
                         self.assertTrue(
