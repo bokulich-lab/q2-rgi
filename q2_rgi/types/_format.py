@@ -8,6 +8,7 @@
 import json
 import os
 import re
+import warnings
 from copy import copy
 
 import pandas as pd
@@ -38,6 +39,12 @@ class CARDDatabaseFormat(model.TextFileFormat):
         ]
         header_exp_2 = copy(header_exp)
         header_exp_2.pop(10)
+        # Bug in pandas when reading mix of number-like and strings in the index
+        warnings.filterwarnings(
+            "ignore",
+            message="The behavior of 'to_datetime' with 'unit' when parsing strings is",
+            category=FutureWarning,
+        )
         card_df = pd.read_json(str(self)).transpose()
         header_obs = list(card_df.columns)
         if header_obs != header_exp and header_obs != header_exp_2:

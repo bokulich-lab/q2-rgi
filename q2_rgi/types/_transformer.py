@@ -9,6 +9,7 @@ import glob
 import json
 import os
 import shutil
+import warnings
 
 import pandas as pd
 import qiime2
@@ -39,6 +40,12 @@ from ._format import (
 
 @plugin.register_transformer
 def _1(data: CARDDatabaseFormat) -> pd.DataFrame:
+    # Bug in pandas when reading mix of number-like and strings in the index
+    warnings.filterwarnings(
+        "ignore",
+        message="The behavior of 'to_datetime' with 'unit' when parsing strings is",
+        category=FutureWarning,
+    )
     ff = pd.read_json(str(data)).transpose()
     return ff
 
