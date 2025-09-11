@@ -11,7 +11,58 @@ from q2_rgi.types import CARDAnnotationDirectoryFormat, CARDDatabaseDirectoryFor
 
 
 def annotate_mags_card(
-    mag: MultiMAGSequencesDirFmt,
+    ctx,
+    mags,
+    card_db,
+    alignment_tool="BLAST",
+    split_prodigal_jobs=False,
+    include_loose=False,
+    include_nudge=False,
+    low_quality=False,
+    threads=1,
+    num_partitions=None,
+):
+    # Define all actions used by the pipeline
+    partition_method = ctx.get_action("types", "partition_sample_data_mags")
+    annotate = ctx.get_action("amr", "_annotate_mags_card")
+    collate_method = ctx.get_action("amr", "collate_mags_annotations")
+    merge_tables = ctx.get_action("feature-table", "merge")
+
+    # Partition the mags
+    (partitioned_seqs,) = partition_method(mags, num_partitions)
+
+    amr_annotations = []
+    feature_tables = []
+
+    # Run _annotate_mags_card for every partition
+    for partition in partitioned_seqs.values():
+        (amr_annotation, feature_table) = annotate(
+            partition,
+            card_db,
+            alignment_tool,
+            split_prodigal_jobs,
+            include_loose,
+            include_nudge,
+            low_quality,
+            threads,
+        )
+
+        # Append output artifacts to lists
+        amr_annotations.append(amr_annotation)
+        feature_tables.append(feature_table)
+
+    # Collate annotation and feature table artifacts
+    (collated_amr_annotations,) = collate_method(amr_annotations)
+    (collated_feature_tables,) = merge_tables(feature_tables)
+
+    return (
+        collated_amr_annotations,
+        collated_feature_tables,
+    )
+
+
+def _annotate_mags_card(
+    mags: MultiMAGSequencesDirFmt,
     card_db: CARDDatabaseDirectoryFormat,
     alignment_tool: str = "BLAST",
     split_prodigal_jobs: bool = False,
@@ -20,7 +71,7 @@ def annotate_mags_card(
     low_quality: bool = False,
     threads: int = 1,
 ) -> (CARDAnnotationDirectoryFormat, pd.DataFrame):
-    manifest = mag.manifest.view(pd.DataFrame)
+    manifest = mags.manifest.view(pd.DataFrame)
     amr_annotations = CARDAnnotationDirectoryFormat()
     frequency_list = []
     with tempfile.TemporaryDirectory() as tmp:
