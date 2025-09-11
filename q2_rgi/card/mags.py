@@ -23,7 +23,7 @@ def annotate_mags_card(
     num_partitions=None,
 ):
     # Define all actions used by the pipeline
-    partition_method = ctx.get_action("moshpit", "partition_sample_data_mags")
+    partition_method = ctx.get_action("types", "partition_sample_data_mags")
     annotate = ctx.get_action("amr", "_annotate_mags_card")
     collate_method = ctx.get_action("amr", "collate_mags_annotations")
     merge_tables = ctx.get_action("feature-table", "merge")
