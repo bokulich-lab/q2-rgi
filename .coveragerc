@@ -1,16 +1,11 @@
 [run]
-source=q2_amr
+source=q2_rgi
 branch = True
 omit =
-    */tests*
-    */__init__.py
-    q2_amr/_version.py
+    **/test_*.py
+    **/__init__.py
+    **/_version.py
     versioneer.py
 
 [report]
 fail_under = 90
-omit =
-    */tests*
-    */__init__.py
-    q2_amr/_version.py
-    versioneer.py
