@@ -8,6 +8,7 @@
 import json
 import os
 import shutil
+import warnings
 
 import pandas as pd
 import qiime2
@@ -111,6 +112,12 @@ class TestCARDDatabaseTypesAndFormats(TestPluginBase):
     def test_dataframe_to_card_format_transformer(self):
         filepath = self.get_data_path("card_test.json")
         transformer = self.get_transformer(pd.DataFrame, CARDDatabaseFormat)
+        # Bug in pandas when reading mix of number-like and strings in the index
+        warnings.filterwarnings(
+            "ignore",
+            message="The behavior of 'to_datetime' with 'unit' when parsing strings is",
+            category=FutureWarning,
+        )
         card_df = pd.read_json(filepath).transpose()
         obs = transformer(card_df)
         self.assertIsInstance(obs, CARDDatabaseFormat)
