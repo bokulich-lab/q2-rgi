@@ -134,7 +134,7 @@ plugin.pipelines.register_function(
     },
     outputs=[
         ("amr_annotations", SampleData[CARDAnnotation]),
-        ("feature_table", FeatureTable[Frequency]),
+        # ("feature_table", FeatureTable[Frequency]),
     ],
     input_descriptions={
         "mags": "MAGs to be annotated with CARD.",
@@ -152,7 +152,7 @@ plugin.pipelines.register_function(
     },
     output_descriptions={
         "amr_annotations": "AMR annotation as .txt and .json file.",
-        "feature_table": "Frequency table of ARGs in all samples.",
+        # "feature_table": "Frequency table of ARGs in all samples.",
     },
     name="Annotate MAGs with antimicrobial resistance genes from CARD.",
     description="Annotate MAGs with antimicrobial resistance genes from CARD.",
@@ -172,7 +172,7 @@ plugin.methods.register_function(
     },
     outputs=[
         ("amr_annotations", SampleData[CARDAnnotation]),
-        ("feature_table", FeatureTable[Frequency]),
+        # ("feature_table", FeatureTable[Frequency]),
     ],
     input_descriptions={
         "mags": "MAGs to be annotated with CARD.",
@@ -189,7 +189,7 @@ plugin.methods.register_function(
     },
     output_descriptions={
         "amr_annotations": "AMR annotation as .txt and .json file.",
-        "feature_table": "Frequency table of ARGs in all samples.",
+        # "feature_table": "Frequency table of ARGs in all samples.",
     },
     name="Annotate MAGs with antimicrobial resistance genes from CARD.",
     description="Annotate MAGs with antimicrobial resistance genes from CARD.",
