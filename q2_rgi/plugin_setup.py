@@ -9,6 +9,7 @@ import importlib
 
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.per_sample_sequences import (
+    Contigs,
     MAGs,
     PairedEndSequencesWithQuality,
     SequencesWithQuality,
@@ -37,19 +38,19 @@ from q2_rgi.card.kmer import (
     kmer_query_mags_card,
     kmer_query_reads_card,
 )
-from q2_rgi.card.mags import _annotate_mags_card, annotate_mags_card
 from q2_rgi.card.partition import (
-    collate_mags_annotations,
     collate_mags_kmer_analyses,
     collate_reads_allele_annotations,
     collate_reads_allele_kmer_analyses,
     collate_reads_gene_annotations,
     collate_reads_gene_kmer_analyses,
+    collate_sequences_annotations,
     partition_mags_annotations,
     partition_reads_allele_annotations,
     partition_reads_gene_annotations,
 )
 from q2_rgi.card.reads import _annotate_reads_card, annotate_reads_card
+from q2_rgi.card.sequences import _annotate_sequences_card, annotate_sequences_card
 from q2_rgi.types import (
     CARDAnnotationJSONFormat,
     CARDAnnotationTXTFormat,
@@ -121,8 +122,8 @@ plugin.methods.register_function(
 )
 
 plugin.pipelines.register_function(
-    function=annotate_mags_card,
-    inputs={"mags": SampleData[MAGs], "card_db": CARDDatabase},
+    function=annotate_sequences_card,
+    inputs={"seqs": SampleData[MAGs | Contigs], "card_db": CARDDatabase},
     parameters={
         "alignment_tool": Str % Choices(["BLAST", "DIAMOND"]),
         "split_prodigal_jobs": Bool,
@@ -134,7 +135,7 @@ plugin.pipelines.register_function(
     },
     outputs=[("amr_annotations", SampleData[CARDAnnotation])],
     input_descriptions={
-        "mags": "MAGs to be annotated with CARD.",
+        "seqs": "Sequences to be annotated with CARD.",
         "card_db": "CARD Database.",
     },
     parameter_descriptions={
@@ -148,14 +149,14 @@ plugin.pipelines.register_function(
         "num_partitions": "Number of partitions that should run in parallel.",
     },
     output_descriptions={"amr_annotations": "AMR annotation as .txt and .json file."},
-    name="Annotate MAGs with antimicrobial resistance genes from CARD.",
-    description="Annotate MAGs with antimicrobial resistance genes from CARD.",
+    name="Annotate sequences with antimicrobial resistance genes from CARD.",
+    description="Annotate sequences with antimicrobial resistance genes from CARD.",
     citations=[citations["alcock_card_2023"]],
 )
 
 plugin.methods.register_function(
-    function=_annotate_mags_card,
-    inputs={"mags": SampleData[MAGs], "card_db": CARDDatabase},
+    function=_annotate_sequences_card,
+    inputs={"seqs": SampleData[MAGs | Contigs], "card_db": CARDDatabase},
     parameters={
         "alignment_tool": Str % Choices(["BLAST", "DIAMOND"]),
         "split_prodigal_jobs": Bool,
@@ -166,7 +167,7 @@ plugin.methods.register_function(
     },
     outputs=[("amr_annotations", SampleData[CARDAnnotation])],
     input_descriptions={
-        "mags": "MAGs to be annotated with CARD.",
+        "seqs": "Sequences to be annotated with CARD.",
         "card_db": "CARD Database.",
     },
     parameter_descriptions={
@@ -179,8 +180,8 @@ plugin.methods.register_function(
         "threads": "Number of threads (CPUs) to use in the BLAST search.",
     },
     output_descriptions={"amr_annotations": "AMR annotation as .txt and .json file."},
-    name="Annotate MAGs with antimicrobial resistance genes from CARD.",
-    description="Annotate MAGs with antimicrobial resistance genes from CARD.",
+    name="Annotate sequences with antimicrobial resistance genes from CARD.",
+    description="Annotate sequences with antimicrobial resistance genes from CARD.",
     citations=[citations["alcock_card_2023"]],
 )
 
@@ -485,7 +486,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=collate_mags_annotations,
+    function=collate_sequences_annotations,
     inputs={"annotations": List[SampleData[CARDAnnotation]]},
     parameters={},
     outputs={"collated_annotations": SampleData[CARDAnnotation]},
@@ -696,7 +697,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=collate_mags_annotations,
+    function=collate_sequences_annotations,
     inputs={"annotations": List[SampleData[CARDAnnotation]]},
     parameters={},
     outputs={"collated_annotations": SampleData[CARDAnnotation]},

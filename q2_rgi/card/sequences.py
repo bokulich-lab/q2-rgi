@@ -2,17 +2,22 @@ import os
 import shutil
 import subprocess
 import tempfile
+from typing import Union
 
-import pandas as pd
-from q2_types.per_sample_sequences import MultiMAGSequencesDirFmt
+from q2_types.per_sample_sequences import (
+    Contigs,
+    ContigSequencesDirFmt,
+    MultiMAGSequencesDirFmt,
+)
+from q2_types.sample_data import SampleData
 
 from q2_rgi.card.utils import load_card_db, run_command
 from q2_rgi.types import CARDAnnotationDirectoryFormat, CARDDatabaseDirectoryFormat
 
 
-def annotate_mags_card(
+def annotate_sequences_card(
     ctx,
-    mags,
+    seqs,
     card_db,
     alignment_tool="BLAST",
     split_prodigal_jobs=False,
@@ -23,16 +28,20 @@ def annotate_mags_card(
     num_partitions=None,
 ):
     # Define all actions used by the pipeline
-    partition_method = ctx.get_action("types", "partition_sample_data_mags")
-    annotate = ctx.get_action("rgi", "_annotate_mags_card")
-    collate_method = ctx.get_action("rgi", "collate_mags_annotations")
+    if seqs.type <= SampleData[Contigs]:
+        partition_method = ctx.get_action("assembly", "partition_contigs")
+    else:
+        partition_method = ctx.get_action("types", "partition_sample_data_mags")
 
-    # Partition the mags
-    (partitioned_seqs,) = partition_method(mags, num_partitions)
+    annotate = ctx.get_action("rgi", "_annotate_sequences_card")
+    collate_method = ctx.get_action("rgi", "collate_sequences_annotations")
+
+    # Partition the seqs
+    (partitioned_seqs,) = partition_method(seqs, num_partitions)
 
     amr_annotations = []
 
-    # Run _annotate_mags_card for every partition
+    # Run _annotate_sequences_card for every partition
     for partition in partitioned_seqs.values():
         (amr_annotation,) = annotate(
             partition,
@@ -54,8 +63,8 @@ def annotate_mags_card(
     return collated_amr_annotations
 
 
-def _annotate_mags_card(
-    mags: MultiMAGSequencesDirFmt,
+def _annotate_sequences_card(
+    seqs: Union[MultiMAGSequencesDirFmt, ContigSequencesDirFmt],
     card_db: CARDDatabaseDirectoryFormat,
     alignment_tool: str = "BLAST",
     split_prodigal_jobs: bool = False,
@@ -64,31 +73,44 @@ def _annotate_mags_card(
     low_quality: bool = False,
     threads: int = 1,
 ) -> CARDAnnotationDirectoryFormat:
-    manifest = mags.manifest.view(pd.DataFrame)
     amr_annotations = CARDAnnotationDirectoryFormat()
+
+    # For SampleData[MAGs]
+    if isinstance(seqs, MultiMAGSequencesDirFmt):
+        sample_dict = seqs.sample_dict()
+
+    # For SampleData[Contigs]
+    else:
+        file_dict = seqs.sample_dict()
+        # Create fake sample for sample_dict
+        sample_dict = {"": file_dict}
 
     with tempfile.TemporaryDirectory() as tmp:
         load_card_db(card_db=card_db)
-        for samp_bin in list(manifest.index):
-            bin_dir = os.path.join(str(amr_annotations), samp_bin[0], samp_bin[1])
-            os.makedirs(bin_dir, exist_ok=True)
-            input_sequence = manifest.loc[samp_bin, "filename"]
+        for sample_id, files_dict in sample_dict.items():
+            for _id, file_fp in files_dict.items():
+                # Create output directory
+                dir_path = os.path.join(str(amr_annotations), sample_id, _id)
+                os.makedirs(dir_path, exist_ok=True)
 
-            run_rgi_main(
-                tmp,
-                input_sequence,
-                alignment_tool,
-                split_prodigal_jobs,
-                include_loose,
-                include_nudge,
-                low_quality,
-                threads,
-            )
-            txt_path = os.path.join(bin_dir, "amr_annotation.txt")
-            json_path = os.path.join(bin_dir, "amr_annotation.json")
+                # Run rgi main
+                run_rgi_main(
+                    tmp,
+                    file_fp,
+                    alignment_tool,
+                    split_prodigal_jobs,
+                    include_loose,
+                    include_nudge,
+                    low_quality,
+                    threads,
+                )
 
-            shutil.move(f"{tmp}/output.txt", txt_path)
-            shutil.move(f"{tmp}/output.json", json_path)
+                # Move output files to the correct location
+                txt_path = os.path.join(dir_path, "amr_annotation.txt")
+                json_path = os.path.join(dir_path, "amr_annotation.json")
+
+                shutil.move(f"{tmp}/output.txt", txt_path)
+                shutil.move(f"{tmp}/output.json", json_path)
 
     return amr_annotations
 
