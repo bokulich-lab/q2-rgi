@@ -19,9 +19,7 @@ def heatmap(
     display: str = "plain",
     frequency: bool = False,
 ):
-    TEMPLATES = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "assets", "rgi"
-    )
+    TEMPLATES = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets")
     annotation_dir = str(amr_annotation)
     with tempfile.TemporaryDirectory() as tmp:
         # Create directories for the JSON annotation files and the heatmap output files
