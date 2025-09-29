@@ -5,7 +5,6 @@ import subprocess
 import tempfile
 from distutils.dir_util import copy_tree
 
-import pkg_resources
 import q2templates
 
 from q2_rgi.card.utils import run_command
@@ -20,7 +19,9 @@ def heatmap(
     display: str = "plain",
     frequency: bool = False,
 ):
-    TEMPLATES = pkg_resources.resource_filename("q2_rgi", "assets")
+    TEMPLATES = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "assets", "rgi"
+    )
     annotation_dir = str(amr_annotation)
     with tempfile.TemporaryDirectory() as tmp:
         # Create directories for the JSON annotation files and the heatmap output files
