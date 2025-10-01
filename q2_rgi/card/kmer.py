@@ -23,9 +23,9 @@ def kmer_query_mags_card(
     ctx, amr_annotations, kmer_db, card_db, minimum=10, threads=1, num_partitions=None
 ):
     # Define all actions used by the pipeline
-    partition_method = ctx.get_action("amr", "partition_mags_annotations")
-    collate_method = ctx.get_action("amr", "collate_mags_kmer_analyses")
-    kmer_query = ctx.get_action("amr", "_kmer_query_mags")
+    partition_method = ctx.get_action("rgi", "partition_mags_annotations")
+    collate_method = ctx.get_action("rgi", "collate_mags_kmer_analyses")
+    kmer_query = ctx.get_action("rgi", "_kmer_query_mags")
 
     # Partition the annotations
     (partitioned_annotations,) = partition_method(amr_annotations, num_partitions)
@@ -55,10 +55,10 @@ def kmer_query_reads_card(
     ctx, amr_annotations, card_db, kmer_db, minimum=10, threads=1, num_partitions=None
 ):
     # Define all actions used by the pipeline
-    partition_method = ctx.get_action("amr", "partition_reads_allele_annotations")
-    collate_method_allele = ctx.get_action("amr", "collate_reads_allele_kmer_analyses")
-    collate_method_gene = ctx.get_action("amr", "collate_reads_gene_kmer_analyses")
-    kmer_query = ctx.get_action("amr", "_kmer_query_reads")
+    partition_method = ctx.get_action("rgi", "partition_reads_allele_annotations")
+    collate_method_allele = ctx.get_action("rgi", "collate_reads_allele_kmer_analyses")
+    collate_method_gene = ctx.get_action("rgi", "collate_reads_gene_kmer_analyses")
+    kmer_query = ctx.get_action("rgi", "_kmer_query_reads")
 
     # Partition the annotations
     (partitioned_annotations,) = partition_method(amr_annotations, num_partitions)
