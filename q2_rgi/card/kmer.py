@@ -127,7 +127,7 @@ def _kmer_query_helper(card_db, kmer_db, amr_annotations, minimum, threads):
 
     with tempfile.TemporaryDirectory() as tmp:
         # Load all necessary database files and retrieve Kmer size
-        kmer_size = load_card_db(tmp=tmp, card_db=card_db, kmer_db=kmer_db, kmer=True)
+        kmer_size = load_card_db(card_db=card_db, kmer_db=kmer_db, kmer=True)
 
         # Run once per annotation file
         for root, dirs, files in os.walk(str(amr_annotations)):
@@ -231,7 +231,7 @@ def kmer_build_card(
 
     with tempfile.TemporaryDirectory() as tmp:
         # Load card_db and get data path to card_db fasta file
-        load_card_db(tmp=tmp, card_db=card_db)
+        load_card_db(card_db=card_db)
         card_fasta = glob.glob(os.path.join(str(card_db), "card_database_v*.fasta"))[0]
 
         # Run RGI kmer-build
