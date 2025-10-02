@@ -208,7 +208,6 @@ def _run_rgi_kmer_query(tmp, input_file, input_type, kmer_size, minimum, threads
         str(threads),
         "--output",
         "output",
-        "--local",
     ]
 
     try:
