@@ -921,7 +921,7 @@ plugin.pipelines.register_function(
     name="Pathogen-of-origin prediction for ARGs in MAGs",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-mags-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.methods.register_function(
@@ -957,7 +957,7 @@ plugin.methods.register_function(
     name="Pathogen-of-origin prediction for ARGs in MAGs",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-mags-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.pipelines.register_function(
@@ -999,7 +999,7 @@ plugin.pipelines.register_function(
     name="Pathogen-of-origin prediction for ARGs in reads",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-reads-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.methods.register_function(
@@ -1039,7 +1039,7 @@ plugin.methods.register_function(
     name="Pathogen-of-origin prediction for ARGs in reads",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-reads-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.methods.register_function(
@@ -1070,7 +1070,7 @@ plugin.methods.register_function(
     name="K-mer build",
     description="With kmer_build_card a kmer database can be built with a custom kmer."
     " size",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 # Registrations
