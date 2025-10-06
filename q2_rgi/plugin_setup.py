@@ -104,16 +104,22 @@ plugin.methods.register_function(
     function=fetch_card_db,
     inputs={},
     parameters={},
-    outputs=[("card_db", CARDDatabase), ("kmer_db", CARDKmerDatabase)],
+    outputs=[
+        ("card_db", CARDDatabase),
+        ("61_mer_db", CARDKmerDatabase),
+        ("15_mer_db", CARDKmerDatabase),
+    ],
     input_descriptions={},
     parameter_descriptions={},
     output_descriptions={
         "card_db": "CARD and WildCARD database of resistance genes, their products and "
         "associated phenotypes.",
-        "kmer_db": "Database of k-mers that are uniquely found within AMR alleles of "
-        "individual pathogen species, pathogen genera, pathogen-restricted "
-        "plasmids, or promiscuous plasmids. The default k-mer length is 61 "
-        "bp, but users can create k-mers of any length.",
+        "61_mer_db": "Database of 61-mers that are uniquely found within AMR alleles "
+        "of individual pathogen species, pathogen genera, pathogen-restricted "
+        "plasmids, or promiscuous plasmids.",
+        "15_mer_db": "Database of 15-mers that are uniquely found within AMR alleles "
+        "of individual pathogen species, pathogen genera, pathogen-restricted "
+        "plasmids, or promiscuous plasmids.",
     },
     name="Download CARD and WildCARD data.",
     description="Download the latest version of the CARD and WildCARD databases.",

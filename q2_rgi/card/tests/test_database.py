@@ -57,12 +57,13 @@ class TestAnnotateMagsCard(TestPluginBase):
             "card_database_v3.2.7_all.fasta",
             "card.json",
         ]
-
-        files_kmer_db = ["all_amr_61mers.txt", "61_kmer_db.json"]
+        files_61_mer_db = ["all_amr_61mers.txt", "61_kmer_db.json"]
+        files_15_mer_db = ["all_amr_15mers.txt", "15_kmer_db.json"]
 
         # Assert if all files are in the correct database object
         for file_list, db_obj in zip(
-            [files_card_db, files_kmer_db], [str(obs[0]), str(obs[1])]
+            [files_card_db, files_61_mer_db, files_15_mer_db],
+            [str(obs[0]), str(obs[1]), str(obs[2])],
         ):
             for file in file_list:
                 self.assertTrue(os.path.exists(os.path.join(db_obj, file)))
@@ -70,6 +71,7 @@ class TestAnnotateMagsCard(TestPluginBase):
         # Assert if both database objects have the correct format
         self.assertIsInstance(obs[0], CARDDatabaseDirectoryFormat)
         self.assertIsInstance(obs[1], CARDKmerDatabaseDirectoryFormat)
+        self.assertIsInstance(obs[2], CARDKmerDatabaseDirectoryFormat)
 
     def test_connection_error(self):
         # Simulate a ConnectionError during requests.get
