@@ -6,7 +6,7 @@ import tempfile
 import pandas as pd
 from q2_types.per_sample_sequences import MultiMAGSequencesDirFmt
 
-from q2_rgi.card.utils import load_card_db, run_command
+from q2_rgi.card.utils import create_count_table, load_card_db, read_in_txt, run_command
 from q2_rgi.types import CARDAnnotationDirectoryFormat, CARDDatabaseDirectoryFormat
 
 
@@ -26,15 +26,17 @@ def annotate_mags_card(
     partition_method = ctx.get_action("types", "partition_sample_data_mags")
     annotate = ctx.get_action("rgi", "_annotate_mags_card")
     collate_method = ctx.get_action("rgi", "collate_mags_annotations")
+    merge_tables = ctx.get_action("feature-table", "merge")
 
     # Partition the mags
     (partitioned_seqs,) = partition_method(mags, num_partitions)
 
     amr_annotations = []
+    feature_tables = []
 
     # Run _annotate_mags_card for every partition
     for partition in partitioned_seqs.values():
-        (amr_annotation,) = annotate(
+        (amr_annotation, feature_table) = annotate(
             partition,
             card_db,
             alignment_tool,
@@ -47,11 +49,13 @@ def annotate_mags_card(
 
         # Append output artifacts to lists
         amr_annotations.append(amr_annotation)
+        feature_tables.append(feature_table)
 
     # Collate annotation and feature table artifacts
     (collated_amr_annotations,) = collate_method(amr_annotations)
+    (collated_feature_table,) = merge_tables(feature_tables)
 
-    return collated_amr_annotations
+    return collated_amr_annotations, collated_feature_table
 
 
 def _annotate_mags_card(
@@ -63,10 +67,10 @@ def _annotate_mags_card(
     include_nudge: bool = False,
     low_quality: bool = False,
     threads: int = 1,
-) -> CARDAnnotationDirectoryFormat:
+) -> (CARDAnnotationDirectoryFormat, pd.DataFrame):
     manifest = mags.manifest.view(pd.DataFrame)
     amr_annotations = CARDAnnotationDirectoryFormat()
-
+    frequency_list = []
     with tempfile.TemporaryDirectory() as tmp:
         load_card_db(card_db=card_db)
         for samp_bin in list(manifest.index):
@@ -89,8 +93,15 @@ def _annotate_mags_card(
 
             shutil.move(f"{tmp}/output.txt", txt_path)
             shutil.move(f"{tmp}/output.json", json_path)
-
-    return amr_annotations
+            frequency_df = read_in_txt(
+                path=txt_path, samp_bin_name=samp_bin[0], data_type="mags"
+            )
+            frequency_list.append(frequency_df)
+        feature_table = create_count_table(df_list=frequency_list)
+    return (
+        amr_annotations,
+        feature_table,
+    )
 
 
 def run_rgi_main(

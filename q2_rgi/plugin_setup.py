@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 import importlib
 
-from q2_types.feature_table import FeatureTable, Frequency
+from q2_types.feature_table import FeatureTable, Frequency, PresenceAbsence
 from q2_types.per_sample_sequences import (
     MAGs,
     PairedEndSequencesWithQuality,
@@ -132,7 +132,10 @@ plugin.pipelines.register_function(
         "threads": Int % Range(0, None, inclusive_start=False),
         "num_partitions": Int % Range(0, None, inclusive_start=False),
     },
-    outputs=[("amr_annotations", SampleData[CARDAnnotation])],
+    outputs=[
+        ("amr_annotations", SampleData[CARDAnnotation]),
+        ("feature_table", FeatureTable[PresenceAbsence]),
+    ],
     input_descriptions={
         "mags": "MAGs to be annotated with CARD.",
         "card_db": "CARD Database.",
@@ -147,7 +150,10 @@ plugin.pipelines.register_function(
         "threads": "Number of threads (CPUs) to use in the BLAST search.",
         "num_partitions": "Number of partitions that should run in parallel.",
     },
-    output_descriptions={"amr_annotations": "AMR annotation as .txt and .json file."},
+    output_descriptions={
+        "amr_annotations": "AMR annotation as .txt and .json file.",
+        "feature_table": "Presence/Absence table of ARGs in all samples.",
+    },
     name="Annotate MAGs with antimicrobial resistance genes from CARD.",
     description="Annotate MAGs with antimicrobial resistance genes from CARD.",
     citations=[citations["alcock_card_2023"]],
@@ -164,7 +170,10 @@ plugin.methods.register_function(
         "low_quality": Bool,
         "threads": Int % Range(0, None, inclusive_start=False),
     },
-    outputs=[("amr_annotations", SampleData[CARDAnnotation])],
+    outputs=[
+        ("amr_annotations", SampleData[CARDAnnotation]),
+        ("feature_table", FeatureTable[PresenceAbsence]),
+    ],
     input_descriptions={
         "mags": "MAGs to be annotated with CARD.",
         "card_db": "CARD Database.",
@@ -178,7 +187,10 @@ plugin.methods.register_function(
         "low_quality": "Use for short contigs to predict partial genes.",
         "threads": "Number of threads (CPUs) to use in the BLAST search.",
     },
-    output_descriptions={"amr_annotations": "AMR annotation as .txt and .json file."},
+    output_descriptions={
+        "amr_annotations": "AMR annotation as .txt and .json file.",
+        "feature_table": "Presence/Absence table of ARGs in all samples.",
+    },
     name="Annotate MAGs with antimicrobial resistance genes from CARD.",
     description="Annotate MAGs with antimicrobial resistance genes from CARD.",
     citations=[citations["alcock_card_2023"]],
