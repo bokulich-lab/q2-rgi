@@ -19,7 +19,6 @@ from q2_types.feature_data import (
     ProteinFASTAFormat,
     ProteinIterator,
     SequenceCharacteristicsDirectoryFormat,
-    SequenceCharacteristicsFormat,
 )
 from q2_types.genome_data import GenesDirectoryFormat, ProteinsDirectoryFormat
 from qiime2.core.exceptions import ValidationError
@@ -656,10 +655,9 @@ class TestSequenceCharacteristicsTransformer(TestPluginBase):
         )
         obs = transformer(annotation)
         self.assertIsInstance(obs, SequenceCharacteristicsDirectoryFormat)
-        format = SequenceCharacteristicsFormat(
-            os.path.join(obs.path, "gene_length.txt"), mode="r"
-        )
-        format.validate()
+        table_obs = pd.read_csv(os.path.join(obs.path, "gene_length.txt"), sep="\t")
+        table_exp = pd.read_csv(self.get_data_path("gene_length_allele.txt"), sep="\t")
+        self.assertTrue(table_obs.equals(table_exp))
 
     def test_gene_annotation_to_sequence_characteristics(self):
         transformer = self.get_transformer(
@@ -670,7 +668,6 @@ class TestSequenceCharacteristicsTransformer(TestPluginBase):
         )
         obs = transformer(annotation)
         self.assertIsInstance(obs, SequenceCharacteristicsDirectoryFormat)
-        format = SequenceCharacteristicsFormat(
-            os.path.join(obs.path, "gene_length.txt"), mode="r"
-        )
-        format.validate()
+        table_obs = pd.read_csv(os.path.join(obs.path, "gene_length.txt"), sep="\t")
+        table_exp = pd.read_csv(self.get_data_path("gene_length_gene.txt"), sep="\t")
+        self.assertTrue(table_obs.equals(table_exp))
