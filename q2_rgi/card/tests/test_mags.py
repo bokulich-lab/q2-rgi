@@ -41,15 +41,19 @@ class TestAnnotateMagsCard(TestPluginBase):
             patch("q2_rgi.card.mags.load_card_db"),
         ):
             result = _annotate_mags_card(mag, card_db)
-            self.assertIsInstance(result, CARDAnnotationDirectoryFormat)
+            self.assertIsInstance(result[0], CARDAnnotationDirectoryFormat)
             self.assertTrue(
                 os.path.exists(
-                    os.path.join(str(result), "sample1", "bin1", "amr_annotation.txt")
+                    os.path.join(
+                        str(result[0]), "sample1", "bin1", "amr_annotation.txt"
+                    )
                 )
             )
             self.assertTrue(
                 os.path.exists(
-                    os.path.join(str(result), "sample1", "bin1", "amr_annotation.json")
+                    os.path.join(
+                        str(result[0]), "sample1", "bin1", "amr_annotation.json"
+                    )
                 )
             )
 
@@ -100,12 +104,13 @@ class TestAnnotateMagsCard(TestPluginBase):
         # Mock the get_action method to return MagicMock objects
         mock_ctx = MagicMock()
         mock_ctx.get_action.side_effect = [
-            MagicMock(return_value=({"1": "artifact_mags_1", "2": "artifact_mags_2"},)),
-            MagicMock(return_value=("artifact_amr_annotation",)),
-            MagicMock(return_value=("artifact_amr_annotation_collated",)),
+            MagicMock(return_value=({"1": "mags_1", "2": "mags_2"},)),
+            MagicMock(return_value=("amr_annotation", "feature_table")),
+            MagicMock(return_value=("amr_annotation_collated",)),
+            MagicMock(return_value=("feature_table_collated",)),
         ]
 
         # Call function with mocked ctx
         result = annotate_mags_card(ctx=mock_ctx, mags=mags_artifact, card_db=None)
 
-        self.assertEqual(result, "artifact_amr_annotation_collated")
+        self.assertEqual(result, ("amr_annotation_collated", "feature_table_collated"))

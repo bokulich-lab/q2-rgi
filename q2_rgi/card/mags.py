@@ -94,7 +94,7 @@ def _annotate_mags_card(
             shutil.move(f"{tmp}/output.txt", txt_path)
             shutil.move(f"{tmp}/output.json", json_path)
             frequency_df = read_in_txt(
-                path=txt_path, samp_bin_name=samp_bin[0], data_type="mags"
+                path=txt_path, samp_bin_name=samp_bin[1], data_type="mags"
             )
             frequency_list.append(frequency_df)
         feature_table = create_count_table(df_list=frequency_list)
