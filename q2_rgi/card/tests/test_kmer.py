@@ -150,7 +150,6 @@ class TestKmer(TestPluginBase):
                     "4",
                     "--output",
                     "output",
-                    "--local",
                 ],
                 "path_tmp",
                 verbose=True,
