@@ -104,16 +104,22 @@ plugin.methods.register_function(
     function=fetch_card_db,
     inputs={},
     parameters={},
-    outputs=[("card_db", CARDDatabase), ("kmer_db", CARDKmerDatabase)],
+    outputs=[
+        ("card_db", CARDDatabase),
+        ("61_mer_db", CARDKmerDatabase),
+        ("15_mer_db", CARDKmerDatabase),
+    ],
     input_descriptions={},
     parameter_descriptions={},
     output_descriptions={
         "card_db": "CARD and WildCARD database of resistance genes, their products and "
         "associated phenotypes.",
-        "kmer_db": "Database of k-mers that are uniquely found within AMR alleles of "
-        "individual pathogen species, pathogen genera, pathogen-restricted "
-        "plasmids, or promiscuous plasmids. The default k-mer length is 61 "
-        "bp, but users can create k-mers of any length.",
+        "61_mer_db": "Database of 61-mers that are uniquely found within AMR alleles "
+        "of individual pathogen species, pathogen genera, pathogen-restricted "
+        "plasmids, or promiscuous plasmids.",
+        "15_mer_db": "Database of 15-mers that are uniquely found within AMR alleles "
+        "of individual pathogen species, pathogen genera, pathogen-restricted "
+        "plasmids, or promiscuous plasmids.",
     },
     name="Download CARD and WildCARD data.",
     description="Download the latest version of the CARD and WildCARD databases.",
@@ -915,7 +921,7 @@ plugin.pipelines.register_function(
     name="Pathogen-of-origin prediction for ARGs in MAGs",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-mags-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.methods.register_function(
@@ -951,7 +957,7 @@ plugin.methods.register_function(
     name="Pathogen-of-origin prediction for ARGs in MAGs",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-mags-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.pipelines.register_function(
@@ -993,7 +999,7 @@ plugin.pipelines.register_function(
     name="Pathogen-of-origin prediction for ARGs in reads",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-reads-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.methods.register_function(
@@ -1033,7 +1039,7 @@ plugin.methods.register_function(
     name="Pathogen-of-origin prediction for ARGs in reads",
     description="CARD's k-mer classifiers can be used to predict pathogen-of-origin for"
     " ARGs found by annotate-reads-card.",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 plugin.methods.register_function(
@@ -1064,7 +1070,7 @@ plugin.methods.register_function(
     name="K-mer build",
     description="With kmer_build_card a kmer database can be built with a custom kmer."
     " size",
-    citations=[citations["alcock_card_2023"]],
+    citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
 )
 
 # Registrations
