@@ -11,7 +11,55 @@ from q2_rgi.types import CARDAnnotationDirectoryFormat, CARDDatabaseDirectoryFor
 
 
 def annotate_mags_card(
-    mag: MultiMAGSequencesDirFmt,
+    ctx,
+    mags,
+    card_db,
+    alignment_tool="BLAST",
+    split_prodigal_jobs=False,
+    include_loose=False,
+    include_nudge=False,
+    low_quality=False,
+    threads=1,
+    num_partitions=None,
+):
+    # Define all actions used by the pipeline
+    partition_method = ctx.get_action("types", "partition_sample_data_mags")
+    annotate = ctx.get_action("rgi", "_annotate_mags_card")
+    collate_method = ctx.get_action("rgi", "collate_mags_annotations")
+    merge_tables = ctx.get_action("feature-table", "merge")
+
+    # Partition the mags
+    (partitioned_seqs,) = partition_method(mags, num_partitions)
+
+    amr_annotations = []
+    feature_tables = []
+
+    # Run _annotate_mags_card for every partition
+    for partition in partitioned_seqs.values():
+        (amr_annotation, feature_table) = annotate(
+            partition,
+            card_db,
+            alignment_tool,
+            split_prodigal_jobs,
+            include_loose,
+            include_nudge,
+            low_quality,
+            threads,
+        )
+
+        # Append output artifacts to lists
+        amr_annotations.append(amr_annotation)
+        feature_tables.append(feature_table)
+
+    # Collate annotation and feature table artifacts
+    (collated_amr_annotations,) = collate_method(amr_annotations)
+    (collated_feature_table,) = merge_tables(feature_tables)
+
+    return collated_amr_annotations, collated_feature_table
+
+
+def _annotate_mags_card(
+    mags: MultiMAGSequencesDirFmt,
     card_db: CARDDatabaseDirectoryFormat,
     alignment_tool: str = "BLAST",
     split_prodigal_jobs: bool = False,
@@ -20,7 +68,7 @@ def annotate_mags_card(
     low_quality: bool = False,
     threads: int = 1,
 ) -> (CARDAnnotationDirectoryFormat, pd.DataFrame):
-    manifest = mag.manifest.view(pd.DataFrame)
+    manifest = mags.manifest.view(pd.DataFrame)
     amr_annotations = CARDAnnotationDirectoryFormat()
     frequency_list = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -29,6 +77,7 @@ def annotate_mags_card(
             bin_dir = os.path.join(str(amr_annotations), samp_bin[0], samp_bin[1])
             os.makedirs(bin_dir, exist_ok=True)
             input_sequence = manifest.loc[samp_bin, "filename"]
+
             run_rgi_main(
                 tmp,
                 input_sequence,
@@ -44,9 +93,8 @@ def annotate_mags_card(
 
             shutil.move(f"{tmp}/output.txt", txt_path)
             shutil.move(f"{tmp}/output.json", json_path)
-            samp_bin_name = os.path.join(samp_bin[0], samp_bin[1])
             frequency_df = read_in_txt(
-                path=txt_path, samp_bin_name=samp_bin_name, data_type="mags"
+                path=txt_path, samp_bin_name=samp_bin[1], data_type="mags"
             )
             frequency_list.append(frequency_df)
         feature_table = create_count_table(df_list=frequency_list)
