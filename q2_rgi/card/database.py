@@ -16,7 +16,11 @@ from q2_rgi.types._format import (
 )
 
 
-def fetch_card_db() -> (CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFormat):
+def fetch_card_db() -> (
+    CARDDatabaseDirectoryFormat,
+    CARDKmerDatabaseDirectoryFormat,
+    CARDKmerDatabaseDirectoryFormat,
+):
     with tempfile.TemporaryDirectory() as tmp_dir:
         try:
             card_tar_path = os.path.join(tmp_dir, "card_tar")
@@ -67,6 +71,8 @@ def fetch_card_db() -> (CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFo
             "nucleotide_fasta_rRNA_gene_variant_model_variants.fasta.gz",
             "61_kmer_db.json.gz",
             "all_amr_61mers.txt.gz",
+            "15_kmer_db.json.gz",
+            "all_amr_15mers.txt.gz",
         )
 
         # Unzip gzip files and save them in "wildcard" dir
@@ -89,7 +95,8 @@ def fetch_card_db() -> (CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFo
 
         # Create CARD and Kmer database artifacts
         card_db = CARDDatabaseDirectoryFormat()
-        kmer_db = CARDKmerDatabaseDirectoryFormat()
+        _61_mer_db = CARDKmerDatabaseDirectoryFormat()
+        _15_mer_db = CARDKmerDatabaseDirectoryFormat()
 
         # Find names of CARD database files created by preprocess function
         card_db_files = [
@@ -111,19 +118,27 @@ def fetch_card_db() -> (CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFo
             card_db_files[0],
             card_db_files[1],
         ]
-        wildcard_to_kmer_db = ["all_amr_61mers.txt", "61_kmer_db.json"]
+        wildcard_to_61_mer_db = ["all_amr_61mers.txt", "61_kmer_db.json"]
+        wildcard_to_15_mer_db = ["all_amr_15mers.txt", "15_kmer_db.json"]
 
         # List of source and destination paths for files
         src_des_list = [
             (os.path.join(tmp_dir, "card"), str(card_db)),
             (os.path.join(tmp_dir, "wildcard"), str(card_db)),
             (tmp_dir, str(card_db)),
-            (os.path.join(tmp_dir, "wildcard"), str(kmer_db)),
+            (os.path.join(tmp_dir, "wildcard"), str(_61_mer_db)),
+            (os.path.join(tmp_dir, "wildcard"), str(_15_mer_db)),
         ]
 
         # Move all files from source path to destination path
         for file_list, src_des in zip(
-            [["card.json"], wildcard_to_card_db, tmp_to_card_db, wildcard_to_kmer_db],
+            [
+                ["card.json"],
+                wildcard_to_card_db,
+                tmp_to_card_db,
+                wildcard_to_61_mer_db,
+                wildcard_to_15_mer_db,
+            ],
             src_des_list,
         ):
             for file in file_list:
@@ -131,7 +146,7 @@ def fetch_card_db() -> (CARDDatabaseDirectoryFormat, CARDKmerDatabaseDirectoryFo
                     os.path.join(src_des[0], file), os.path.join(src_des[1], file)
                 )
 
-        return card_db, kmer_db
+        return card_db, _61_mer_db, _15_mer_db
 
 
 def download_with_progress_bar(url, description, tar_path):
