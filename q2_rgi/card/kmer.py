@@ -143,6 +143,10 @@ def _kmer_query_helper(card_db, kmer_db, amr_annotations, minimum, threads):
                     minimum=minimum,
                     threads=threads,
                 )
+                # Remove .bai files if input type is "bwt"
+                if input_type == "bwt":
+                    if os.path.exists(f"{input_path}.bai"):
+                        os.remove(f"{input_path}.bai")
 
                 # Define path to JSON kmer analysis file and split it into components
                 path_json = os.path.join(tmp, f"output_{kmer_size}mer_analysis.json")
