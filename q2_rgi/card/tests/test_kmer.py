@@ -50,7 +50,7 @@ class TestKmer(TestPluginBase):
             with open(os.path.join(tmp, file), "w") as f:
                 f.write("{}")
         if input_type == "bwt":
-            with open(input_file + "bai", "w") as f:
+            with open(input_file + ".bai", "w") as f:
                 f.write("BAM")
 
     def _run_kmer_query_test(self, annotation_format, output_format, query_function):
