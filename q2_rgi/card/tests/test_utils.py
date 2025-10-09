@@ -142,7 +142,7 @@ class TestUtilsCARD(TestPluginBase):
             self.assertEqual(str(cm.exception), expected_message)
 
     def test_read_in_txt_mags(self):
-        # Test read_in_txt with output data from _annotate_mags_card
+        # Test read_in_txt with output data from annotate_mags_card
         self.read_in_txt_test_body(
             filename="output.mags.txt",
             samp_bin_name="sample1/bin1",
