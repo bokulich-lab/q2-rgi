@@ -8,6 +8,7 @@
 import json
 import os
 import re
+import warnings
 from copy import copy
 
 import pandas as pd
@@ -38,6 +39,12 @@ class CARDDatabaseFormat(model.TextFileFormat):
         ]
         header_exp_2 = copy(header_exp)
         header_exp_2.pop(10)
+        # Bug in pandas when reading mix of number-like and strings in the index
+        warnings.filterwarnings(
+            "ignore",
+            message="The behavior of 'to_datetime' with 'unit' when parsing strings is",
+            category=FutureWarning,
+        )
         card_df = pd.read_json(str(self)).transpose()
         header_obs = list(card_df.columns)
         if header_obs != header_exp and header_obs != header_exp_2:
@@ -168,7 +175,7 @@ class CARDKmerDatabaseDirectoryFormat(model.DirectoryFormat):
 
 class CARDAnnotationTXTFormat(model.TextFileFormat):
     def _validate(self, n_records=None):
-        header_exp = [
+        header_exp = {
             "ORF_ID",
             "Contig",
             "Start",
@@ -194,14 +201,14 @@ class CARDAnnotationTXTFormat(model.TextFileFormat):
             "Model_ID",
             "Nudged",
             "Note",
-        ]
+        }
         df = pd.read_csv(str(self), sep="\t")
 
-        header_obs = list(df.columns)
-        if header_obs != header_exp:
+        header_obs = set(df.columns)
+        if not header_exp.issubset(header_obs):
             raise ValidationError(
-                "Header line does not match CARDAnnotation format. Must consist of "
-                "the following values: "
+                "Header line does not match CARDAnnotation format. Must at least "
+                "consist of the following values: "
                 + ", ".join(header_exp)
                 + ".\n\nFound instead: "
                 + ", ".join(header_obs)
