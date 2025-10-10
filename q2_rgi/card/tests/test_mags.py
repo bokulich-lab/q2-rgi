@@ -4,10 +4,9 @@ import subprocess
 from unittest.mock import MagicMock, patch
 
 from q2_types.per_sample_sequences import MultiMAGSequencesDirFmt
-from qiime2 import Artifact
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_rgi.card.mags import _annotate_mags_card, annotate_mags_card, run_rgi_main
+from q2_rgi.card.mags import annotate_mags_card, run_rgi_main
 from q2_rgi.types import CARDAnnotationDirectoryFormat, CARDDatabaseDirectoryFormat
 
 
@@ -36,11 +35,16 @@ class TestAnnotateMagsCard(TestPluginBase):
         card_db = CARDDatabaseDirectoryFormat()
         shutil.copy(manifest, os.path.join(str(mag), "MANIFEST"))
 
-        with (
-            patch("q2_rgi.card.mags.run_rgi_main", side_effect=self.mock_run_rgi_main),
-            patch("q2_rgi.card.mags.load_card_db"),
+        mock_create_count_table = MagicMock()
+        mock_read_in_txt = MagicMock()
+        with patch(
+            "q2_rgi.card.mags.run_rgi_main", side_effect=self.mock_run_rgi_main
+        ), patch("q2_rgi.card.mags.load_card_db"), patch(
+            "q2_rgi.card.mags.read_in_txt", mock_read_in_txt
+        ), patch(
+            "q2_rgi.card.mags.create_count_table", mock_create_count_table
         ):
-            result = _annotate_mags_card(mag, card_db)
+            result = annotate_mags_card(mag, card_db)
             self.assertIsInstance(result[0], CARDAnnotationDirectoryFormat)
             self.assertTrue(
                 os.path.exists(
@@ -95,22 +99,3 @@ class TestAnnotateMagsCard(TestPluginBase):
             with self.assertRaises(Exception) as cm:
                 run_rgi_main(tmp, input_sequence)
             self.assertEqual(str(cm.exception), expected_message)
-
-    def test_annotate_mags_card_pipeline(self):
-        mags_path = self.get_data_path("mags")
-        mags = MultiMAGSequencesDirFmt(mags_path, "r")
-        mags_artifact = Artifact.import_data("SampleData[MAGs]", mags)
-
-        # Mock the get_action method to return MagicMock objects
-        mock_ctx = MagicMock()
-        mock_ctx.get_action.side_effect = [
-            MagicMock(return_value=({"1": "mags_1", "2": "mags_2"},)),
-            MagicMock(return_value=("amr_annotation", "feature_table")),
-            MagicMock(return_value=("amr_annotation_collated",)),
-            MagicMock(return_value=("feature_table_collated",)),
-        ]
-
-        # Call function with mocked ctx
-        result = annotate_mags_card(ctx=mock_ctx, mags=mags_artifact, card_db=None)
-
-        self.assertEqual(result, ("amr_annotation_collated", "feature_table_collated"))
