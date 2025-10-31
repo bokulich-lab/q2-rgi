@@ -7,24 +7,14 @@
 # ----------------------------------------------------------------------------
 import importlib
 
-from q2_types.feature_table import FeatureTable, Frequency, PresenceAbsence
+from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.per_sample_sequences import (
     MAGs,
     PairedEndSequencesWithQuality,
     SequencesWithQuality,
 )
 from q2_types.sample_data import SampleData
-from qiime2.core.type import (
-    Bool,
-    Choices,
-    Collection,
-    Int,
-    List,
-    Properties,
-    Range,
-    Str,
-    TypeMap,
-)
+from qiime2.core.type import Bool, Choices, Collection, Int, List, Range, Str
 from qiime2.plugin import Citations, Plugin
 
 from q2_rgi import __version__
@@ -37,7 +27,7 @@ from q2_rgi.card.kmer import (
     kmer_query_mags_card,
     kmer_query_reads_card,
 )
-from q2_rgi.card.mags import _annotate_mags_card, annotate_mags_card
+from q2_rgi.card.mags import annotate_mags_card
 from q2_rgi.card.partition import (
     collate_mags_annotations,
     collate_mags_kmer_analyses,
@@ -126,48 +116,9 @@ plugin.methods.register_function(
     citations=[citations["alcock_card_2023"]],
 )
 
-plugin.pipelines.register_function(
-    function=annotate_mags_card,
-    inputs={"mags": SampleData[MAGs], "card_db": CARDDatabase},
-    parameters={
-        "alignment_tool": Str % Choices(["BLAST", "DIAMOND"]),
-        "split_prodigal_jobs": Bool,
-        "include_loose": Bool,
-        "include_nudge": Bool,
-        "low_quality": Bool,
-        "threads": Int % Range(0, None, inclusive_start=False),
-        "num_partitions": Int % Range(0, None, inclusive_start=False),
-    },
-    outputs=[
-        ("amr_annotations", SampleData[CARDAnnotation]),
-        ("feature_table", FeatureTable[PresenceAbsence]),
-    ],
-    input_descriptions={
-        "mags": "MAGs to be annotated with CARD.",
-        "card_db": "CARD Database.",
-    },
-    parameter_descriptions={
-        "alignment_tool": "Specify alignment tool BLAST or DIAMOND.",
-        "split_prodigal_jobs": "Run multiple prodigal jobs simultaneously for contigs"
-        " in one sample",
-        "include_loose": "Include loose hits in addition to strict and perfect hits.",
-        "include_nudge": "Include hits nudged from loose to strict hits.",
-        "low_quality": "Use for short contigs to predict partial genes.",
-        "threads": "Number of threads (CPUs) to use in the BLAST search.",
-        "num_partitions": "Number of partitions that should run in parallel.",
-    },
-    output_descriptions={
-        "amr_annotations": "AMR annotation as .txt and .json file.",
-        "feature_table": "Presence/Absence table of ARGs in all samples.",
-    },
-    name="Annotate MAGs with antimicrobial resistance genes from CARD.",
-    description="Annotate MAGs with antimicrobial resistance genes from CARD.",
-    citations=[citations["alcock_card_2023"]],
-)
-
 plugin.methods.register_function(
-    function=_annotate_mags_card,
-    inputs={"mags": SampleData[MAGs], "card_db": CARDDatabase},
+    function=annotate_mags_card,
+    inputs={"mag": SampleData[MAGs], "card_db": CARDDatabase},
     parameters={
         "alignment_tool": Str % Choices(["BLAST", "DIAMOND"]),
         "split_prodigal_jobs": Bool,
@@ -178,10 +129,10 @@ plugin.methods.register_function(
     },
     outputs=[
         ("amr_annotations", SampleData[CARDAnnotation]),
-        ("feature_table", FeatureTable[PresenceAbsence]),
+        ("feature_table", FeatureTable[Frequency]),
     ],
     input_descriptions={
-        "mags": "MAGs to be annotated with CARD.",
+        "mag": "MAGs to be annotated with CARD.",
         "card_db": "CARD Database.",
     },
     parameter_descriptions={
@@ -195,20 +146,11 @@ plugin.methods.register_function(
     },
     output_descriptions={
         "amr_annotations": "AMR annotation as .txt and .json file.",
-        "feature_table": "Presence/Absence table of ARGs in all samples.",
+        "feature_table": "Frequency table of ARGs in all samples.",
     },
     name="Annotate MAGs with antimicrobial resistance genes from CARD.",
     description="Annotate MAGs with antimicrobial resistance genes from CARD.",
     citations=[citations["alcock_card_2023"]],
-)
-
-P_aligner, T_allele_annotation = TypeMap(
-    {
-        Str % Choices("kma"): SampleData[CARDAlleleAnnotation % Properties("kma")],
-        Str
-        % Choices("bowtie2"): SampleData[CARDAlleleAnnotation % Properties("bowtie2")],
-        Str % Choices("bwa"): SampleData[CARDAlleleAnnotation % Properties("bwa")],
-    }
 )
 
 plugin.pipelines.register_function(
@@ -218,14 +160,14 @@ plugin.pipelines.register_function(
         "card_db": CARDDatabase,
     },
     parameters={
-        "aligner": P_aligner,
+        "aligner": Str % Choices("kma", "bowtie2", "bwa"),
         "threads": Int % Range(0, None, inclusive_start=False),
         "include_wildcard": Bool,
         "include_other_models": Bool,
         "num_partitions": Int % Range(0, None, inclusive_start=False),
     },
     outputs=[
-        ("amr_allele_annotation", T_allele_annotation),
+        ("amr_allele_annotation", SampleData[CARDAlleleAnnotation]),
         ("amr_gene_annotation", SampleData[CARDGeneAnnotation]),
         ("allele_feature_table", FeatureTable[Frequency]),
         ("gene_feature_table", FeatureTable[Frequency]),
@@ -274,13 +216,13 @@ plugin.methods.register_function(
         "card_db": CARDDatabase,
     },
     parameters={
-        "aligner": P_aligner,
+        "aligner": Str % Choices("kma", "bowtie2", "bwa"),
         "threads": Int % Range(0, None, inclusive_start=False),
         "include_wildcard": Bool,
         "include_other_models": Bool,
     },
     outputs=[
-        ("amr_allele_annotation", T_allele_annotation),
+        ("amr_allele_annotation", SampleData[CARDAlleleAnnotation]),
         ("amr_gene_annotation", SampleData[CARDGeneAnnotation]),
         ("allele_feature_table", FeatureTable[Frequency]),
         ("gene_feature_table", FeatureTable[Frequency]),
@@ -420,10 +362,7 @@ plugin.methods.register_function(
 plugin.pipelines.register_function(
     function=kmer_query_reads_card,
     inputs={
-        "amr_annotations": SampleData[
-            CARDAlleleAnnotation % Properties("bwa")
-            | CARDAlleleAnnotation % Properties("bowtie2")
-        ],
+        "amr_annotations": SampleData[CARDAlleleAnnotation],
         "card_db": CARDDatabase,
         "kmer_db": CARDKmerDatabase,
     },
@@ -515,37 +454,11 @@ plugin.methods.register_function(
     "and collates them into a single artifact.",
 )
 
-T_allele_annotation_collate_in, T_allele_annotation_collate_out = TypeMap(
-    {
-        SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")
-        ]: SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2")]: SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bowtie2")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bwa")]: SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bwa")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2", "bwa")]: SampleData[
-            CARDAlleleAnnotation % Properties("bowtie2", "bwa")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma")]: SampleData[
-            CARDAlleleAnnotation % Properties("kma")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2")]: SampleData[
-            CARDAlleleAnnotation % Properties("bowtie2")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bwa")]: SampleData[
-            CARDAlleleAnnotation % Properties("bwa")
-        ],
-    }
-)
-
 plugin.methods.register_function(
     function=collate_reads_allele_annotations,
-    inputs={"annotations": List[T_allele_annotation_collate_in]},
+    inputs={"annotations": List[SampleData[CARDAlleleAnnotation]]},
     parameters={},
-    outputs={"collated_annotations": T_allele_annotation_collate_out},
+    outputs={"collated_annotations": SampleData[CARDAlleleAnnotation]},
     input_descriptions={
         "annotations": "A collection of annotations from reads at "
         "allele level to be collated."
@@ -625,39 +538,11 @@ plugin.methods.register_function(
     "artifacts or the number of partitions specified.",
 )
 
-T_allele_annotation_in, T_allele_annotation_out = TypeMap(
-    {
-        SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")
-        ]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bwa")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma", "bwa")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2", "bwa")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("bowtie2", "bwa")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("bowtie2")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bwa")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("bwa")]
-        ],
-    }
-)
-
 plugin.methods.register_function(
     function=partition_reads_allele_annotations,
-    inputs={"annotations": T_allele_annotation_in},
+    inputs={"annotations": SampleData[CARDAlleleAnnotation]},
     parameters={"num_partitions": Int % Range(1, None)},
-    outputs={"partitioned_annotations": T_allele_annotation_out},
+    outputs={"partitioned_annotations": Collection[SampleData[CARDAlleleAnnotation]]},
     input_descriptions={"annotations": "The annotations to partition."},
     parameter_descriptions={
         "num_partitions": "The number of partitions to split the annotations "
@@ -669,39 +554,11 @@ plugin.methods.register_function(
     "of individual artifacts or the number of partitions specified.",
 )
 
-T_gene_annotation_in, T_gene_annotation_out = TypeMap(
-    {
-        SampleData[
-            CARDGeneAnnotation % Properties("kma", "bowtie2", "bwa")
-        ]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma", "bowtie2", "bwa")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("kma", "bowtie2")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma", "bowtie2")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("kma", "bwa")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma", "bwa")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("bowtie2", "bwa")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("bowtie2", "bwa")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("kma")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("bowtie2")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("bowtie2")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("bwa")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("bwa")]
-        ],
-    }
-)
-
 plugin.methods.register_function(
     function=partition_reads_gene_annotations,
-    inputs={"annotations": T_gene_annotation_in},
+    inputs={"annotations": SampleData[CARDGeneAnnotation]},
     parameters={"num_partitions": Int % Range(1, None)},
-    outputs={"partitioned_annotations": T_gene_annotation_out},
+    outputs={"partitioned_annotations": Collection[SampleData[CARDGeneAnnotation]]},
     input_descriptions={"annotations": "The annotations to partition."},
     parameter_descriptions={
         "num_partitions": "The number of partitions to split the annotations"
@@ -726,37 +583,11 @@ plugin.methods.register_function(
     "and collates them into a single artifact.",
 )
 
-T_allele_annotation_collate_in, T_allele_annotation_collate_out = TypeMap(
-    {
-        SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")
-        ]: SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2")]: SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bowtie2")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bwa")]: SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bwa")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2", "bwa")]: SampleData[
-            CARDAlleleAnnotation % Properties("bowtie2", "bwa")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma")]: SampleData[
-            CARDAlleleAnnotation % Properties("kma")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2")]: SampleData[
-            CARDAlleleAnnotation % Properties("bowtie2")
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bwa")]: SampleData[
-            CARDAlleleAnnotation % Properties("bwa")
-        ],
-    }
-)
-
 plugin.methods.register_function(
     function=collate_reads_allele_annotations,
-    inputs={"annotations": List[T_allele_annotation_collate_in]},
+    inputs={"annotations": List[SampleData[CARDAlleleAnnotation]]},
     parameters={},
-    outputs={"collated_annotations": T_allele_annotation_collate_out},
+    outputs={"collated_annotations": SampleData[CARDAlleleAnnotation]},
     input_descriptions={
         "annotations": "A collection of annotations from reads at "
         "allele level to be collated."
@@ -837,39 +668,11 @@ plugin.methods.register_function(
     "artifacts or the number of partitions specified.",
 )
 
-T_allele_annotation_in, T_allele_annotation_out = TypeMap(
-    {
-        SampleData[
-            CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")
-        ]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2", "bwa")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma", "bowtie2")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma", "bwa")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma", "bwa")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2", "bwa")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("bowtie2", "bwa")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("kma")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("kma")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bowtie2")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("bowtie2")]
-        ],
-        SampleData[CARDAlleleAnnotation % Properties("bwa")]: Collection[
-            SampleData[CARDAlleleAnnotation % Properties("bwa")]
-        ],
-    }
-)
-
 plugin.methods.register_function(
     function=partition_reads_allele_annotations,
-    inputs={"annotations": T_allele_annotation_in},
+    inputs={"annotations": SampleData[CARDAlleleAnnotation]},
     parameters={"num_partitions": Int % Range(1, None)},
-    outputs={"partitioned_annotations": T_allele_annotation_out},
+    outputs={"partitioned_annotations": Collection[SampleData[CARDAlleleAnnotation]]},
     input_descriptions={"annotations": "The annotations to partition."},
     parameter_descriptions={
         "num_partitions": "The number of partitions to split the annotations "
@@ -881,39 +684,11 @@ plugin.methods.register_function(
     "of individual artifacts or the number of partitions specified.",
 )
 
-T_gene_annotation_in, T_gene_annotation_out = TypeMap(
-    {
-        SampleData[
-            CARDGeneAnnotation % Properties("kma", "bowtie2", "bwa")
-        ]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma", "bowtie2", "bwa")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("kma", "bowtie2")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma", "bowtie2")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("kma", "bwa")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma", "bwa")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("bowtie2", "bwa")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("bowtie2", "bwa")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("kma")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("kma")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("bowtie2")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("bowtie2")]
-        ],
-        SampleData[CARDGeneAnnotation % Properties("bwa")]: Collection[
-            SampleData[CARDGeneAnnotation % Properties("bwa")]
-        ],
-    }
-)
-
 plugin.methods.register_function(
     function=partition_reads_gene_annotations,
-    inputs={"annotations": T_gene_annotation_in},
+    inputs={"annotations": SampleData[CARDGeneAnnotation]},
     parameters={"num_partitions": Int % Range(1, None)},
-    outputs={"partitioned_annotations": T_gene_annotation_out},
+    outputs={"partitioned_annotations": Collection[SampleData[CARDGeneAnnotation]]},
     input_descriptions={"annotations": "The annotations to partition."},
     parameter_descriptions={
         "num_partitions": "The number of partitions to split the annotations"
