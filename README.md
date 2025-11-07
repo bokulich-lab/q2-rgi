@@ -6,54 +6,8 @@
 QIIME 2 plugin for antimicrobial resistance gene annotation of MAGs and metagenomic reads.
 
 ## Installation
-To install _q2-rgi_, follow the steps described below.
+To install _q2-rgi_, follow the steps described in the [QIIME2 library](https://library.qiime2.org/plugins/bokulich-lab/q2-rgi).
 
-<details>
-<summary><b>macOS (intel) / Linux</b></summary>
-
-```shell
-mamba create -yn q2-rgi \
-  -c https://packages.qiime2.org/qiime2/2024.2/shotgun/released/ \
-  -c qiime2 -c conda-forge -c bioconda -c defaults \
-  qiime2 q2cli q2templates q2-types q2-feature-table q2-demux rgi tqdm
-
-conda activate q2-rgi
-
-pip install --no-deps --force-reinstall \
-  git+https://github.com/misialq/rgi.git@py38-fix \
-  git+https://github.com/bokulich-lab/q2-rgi.git
-```
-
-Refresh cache and check that everything worked:
-```shell
-qiime dev refresh-cache
-qiime info
-```
-</details>
-
-<details>
-<summary><b>macOS (apple silicon)</b></summary>
-
-```shell
-CONDA_SUBDIR=osx-64 mamba create -yn q2-rgi \
-  -c https://packages.qiime2.org/qiime2/2024.2/shotgun/released/ \
-  -c qiime2 -c conda-forge -c bioconda -c defaults \
-  qiime2 q2cli q2templates q2-types q2-feature-table q2-demux rgi tqdm
-
-conda activate q2-rgi
-conda config --env --set subdir osx-64
-
-pip install --no-deps --force-reinstall \
-  git+https://github.com/misialq/rgi.git@py38-fix \
-  git+https://github.com/bokulich-lab/q2-rgi.git
-```
-
-Refresh cache and check that everything worked:
-```shell
-qiime dev refresh-cache
-qiime info
-```
-</details>
 
 ## Functionality
 This QIIME 2 plugin contains actions used to annotate short single/paired-end
