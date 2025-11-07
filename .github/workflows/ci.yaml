@@ -10,3 +10,6 @@ jobs:
     uses: bokulich-lab/utilities/.github/workflows/ci.yaml@main
     with:
       distro: amplicon
+
+  qiime-ci:
+    uses: ./.github/workflows/library_ci.yml

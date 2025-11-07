@@ -1,13 +1,11 @@
 name: qiime-ci
 
 on:
-  pull_request:
-    branches: ["main"]
-  push:
-    branches: ["main"]
+  workflow_call: {}
 
 jobs:
   q2-rgi:
+    name: 'q2-rgi (${{ matrix.os }})'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
