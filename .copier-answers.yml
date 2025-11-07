@@ -1,0 +1,20 @@
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Changes here will be overwritten by Copier
+# NEVER EDIT MANUALLY
+# INSTEAD: run a recopy or update command
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+_commit: cb8df35
+_src_path: https://github.com/caporaso-lab/plugin-template.git
+author_email: rischv@ethz.ch
+author_name: Vinzent Risch
+license: BSD-3-Clause
+module_name: q2_rgi
+package_name: q2-rgi
+plugin_description: This is a QIIME 2 plugin that annotates sequence data with antimicrobial
+    resistance gene information from CARD.
+plugin_name: rgi
+plugin_short_description: This is a QIIME 2 plugin that annotates sequence data with
+    antimicrobial resistance gene information from CARD.
+project_url: https://github.com/bokulich-lab/q2-rgi
+target_distro: amplicon
