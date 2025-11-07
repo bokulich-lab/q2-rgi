@@ -1,4 +1,4 @@
-name: Test and lint
+name: qiime-ci
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build-and-test-qiime2-amplicon-dev:
+  q2-rgi:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
