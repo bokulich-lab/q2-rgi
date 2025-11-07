@@ -13,4 +13,4 @@ dependencies:
   - tqdm
   - pip
   - pip:
-     - "q2-rgi@git+https://github.com/bokulich-lab/q2-rgi.git@release-2025.10"
+     - "q2-rgi@git+https://github.com/bokulich-lab/q2-rgi.git@2025.10"
