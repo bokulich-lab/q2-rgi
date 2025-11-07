@@ -76,7 +76,7 @@ jobs:
           released_epoch = os.environ['RELEASED_EPOCH']
 
           release_env_path = \
-            f'environment-files/{pkg_name}-qiime2-{target_distro}-release.yml'
+            f'environment-files/{pkg_name}-qiime2-{target_distro}-dev.yml'
 
           if not os.path.exists(release_env_path):
             raise Exception(f'{release_env_path} not found.')
