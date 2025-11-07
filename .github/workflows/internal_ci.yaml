@@ -10,9 +10,3 @@ jobs:
     uses: bokulich-lab/utilities/.github/workflows/ci.yaml@main
     with:
       distro: amplicon
-
-  qiime-ci:
-    uses: qiime2/distributions/.github/workflows/lib-ci-dev.yaml@dev
-    with:
-      distro: amplicon
-      recipe-path: 'conda-recipe'
