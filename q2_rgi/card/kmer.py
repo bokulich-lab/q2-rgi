@@ -23,9 +23,9 @@ def kmer_query_mags_card(
     ctx, amr_annotations, kmer_db, card_db, minimum=10, threads=1, num_partitions=None
 ):
     # Define all actions used by the pipeline
-    partition_method = ctx.get_action("amr", "partition_mags_annotations")
-    collate_method = ctx.get_action("amr", "collate_mags_kmer_analyses")
-    kmer_query = ctx.get_action("amr", "_kmer_query_mags")
+    partition_method = ctx.get_action("rgi", "partition_mags_annotations")
+    collate_method = ctx.get_action("rgi", "collate_mags_kmer_analyses")
+    kmer_query = ctx.get_action("rgi", "_kmer_query_mags")
 
     # Partition the annotations
     (partitioned_annotations,) = partition_method(amr_annotations, num_partitions)
@@ -55,10 +55,10 @@ def kmer_query_reads_card(
     ctx, amr_annotations, card_db, kmer_db, minimum=10, threads=1, num_partitions=None
 ):
     # Define all actions used by the pipeline
-    partition_method = ctx.get_action("amr", "partition_reads_allele_annotations")
-    collate_method_allele = ctx.get_action("amr", "collate_reads_allele_kmer_analyses")
-    collate_method_gene = ctx.get_action("amr", "collate_reads_gene_kmer_analyses")
-    kmer_query = ctx.get_action("amr", "_kmer_query_reads")
+    partition_method = ctx.get_action("rgi", "partition_reads_allele_annotations")
+    collate_method_allele = ctx.get_action("rgi", "collate_reads_allele_kmer_analyses")
+    collate_method_gene = ctx.get_action("rgi", "collate_reads_gene_kmer_analyses")
+    kmer_query = ctx.get_action("rgi", "_kmer_query_reads")
 
     # Partition the annotations
     (partitioned_annotations,) = partition_method(amr_annotations, num_partitions)
@@ -127,7 +127,7 @@ def _kmer_query_helper(card_db, kmer_db, amr_annotations, minimum, threads):
 
     with tempfile.TemporaryDirectory() as tmp:
         # Load all necessary database files and retrieve Kmer size
-        kmer_size = load_card_db(tmp=tmp, card_db=card_db, kmer_db=kmer_db, kmer=True)
+        kmer_size = load_card_db(card_db=card_db, kmer_db=kmer_db, kmer=True)
 
         # Run once per annotation file
         for root, dirs, files in os.walk(str(amr_annotations)):
@@ -143,6 +143,11 @@ def _kmer_query_helper(card_db, kmer_db, amr_annotations, minimum, threads):
                     minimum=minimum,
                     threads=threads,
                 )
+
+                # Remove .bai files if input type is "bwt"
+                if input_type == "bwt":
+                    if os.path.exists(f"{input_path}.bai"):
+                        os.remove(f"{input_path}.bai")
 
                 # Define path to JSON kmer analysis file and split it into components
                 path_json = os.path.join(tmp, f"output_{kmer_size}mer_analysis.json")
@@ -208,7 +213,6 @@ def _run_rgi_kmer_query(tmp, input_file, input_type, kmer_size, minimum, threads
         str(threads),
         "--output",
         "output",
-        "--local",
     ]
 
     try:
@@ -231,7 +235,7 @@ def kmer_build_card(
 
     with tempfile.TemporaryDirectory() as tmp:
         # Load card_db and get data path to card_db fasta file
-        load_card_db(tmp=tmp, card_db=card_db)
+        load_card_db(card_db=card_db)
         card_fasta = glob.glob(os.path.join(str(card_db), "card_database_v*.fasta"))[0]
 
         # Run RGI kmer-build

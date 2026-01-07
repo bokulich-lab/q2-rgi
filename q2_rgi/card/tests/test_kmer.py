@@ -49,6 +49,9 @@ class TestKmer(TestPluginBase):
         for file in files:
             with open(os.path.join(tmp, file), "w") as f:
                 f.write("{}")
+        if input_type == "bwt":
+            with open(input_file + ".bai", "w") as f:
+                f.write("BAM")
 
     def _run_kmer_query_test(self, annotation_format, output_format, query_function):
         # Mock _run_rgi_kmer_query with side_effect copy_analysis_file
@@ -91,6 +94,12 @@ class TestKmer(TestPluginBase):
             if query_function == _kmer_query_reads:
                 self.assertIsInstance(result[0], output_format[0])
                 self.assertIsInstance(result[1], output_format[1])
+
+                self.assertFalse(
+                    os.path.exists(
+                        os.path.join(str(amr_annotations), "sorted.length_100.bam.bai")
+                    )
+                )
 
                 paths = [
                     os.path.join(str(result[0]), "sample1", self.files_reads[0][7:]),
@@ -150,7 +159,6 @@ class TestKmer(TestPluginBase):
                     "4",
                     "--output",
                     "output",
-                    "--local",
                 ],
                 "path_tmp",
                 verbose=True,
