@@ -19,8 +19,8 @@ from qiime2.core.type import Bool, Choices, Collection, Int, List, Range, Str
 from qiime2.plugin import Citations, Plugin
 
 from q2_rgi import __version__
-from q2_rgi.card import get_gene_lengths
 from q2_rgi.card.database import fetch_card_db
+from q2_rgi.card.get_gene_lengths import get_gene_lengths
 from q2_rgi.card.heatmap import heatmap
 from q2_rgi.card.kmer import (
     _kmer_query_mags,
@@ -893,7 +893,7 @@ plugin.methods.register_function(
     function=get_gene_lengths,
     inputs={"annotations": CARDAlleleAnnotation | CARDGeneAnnotation},
     parameters={},
-    outputs=["gene_lengths", SequenceCharacteristics],
+    outputs=[("gene_lengths", SequenceCharacteristics)],
     input_descriptions={
         "annotations": "AMR gene annotations created with annotate-reads-card.",
     },

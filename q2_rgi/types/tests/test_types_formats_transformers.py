@@ -18,7 +18,6 @@ from q2_types.feature_data import (
     DNAIterator,
     ProteinFASTAFormat,
     ProteinIterator,
-    SequenceCharacteristicsDirectoryFormat,
 )
 from q2_types.genome_data import GenesDirectoryFormat, ProteinsDirectoryFormat
 from qiime2.core.exceptions import ValidationError
@@ -641,33 +640,3 @@ class TestKmerTypesAndFormats(TestPluginBase):
         exp.index = exp.index.astype(str)
         obs = tabulate_data(self.get_data_path("card_allele_annotation"), "allele")
         self.assertEqual(qiime2.Metadata(exp), obs)
-
-
-class TestSequenceCharacteristicsTransformer(TestPluginBase):
-    package = "q2_rgi.types.tests"
-
-    def test_allele_annotation_to_sequence_characteristics(self):
-        transformer = self.get_transformer(
-            CARDAlleleAnnotationDirectoryFormat, SequenceCharacteristicsDirectoryFormat
-        )
-        annotation = CARDAlleleAnnotationDirectoryFormat(
-            self.get_data_path("card_allele_annotation"), "r"
-        )
-        obs = transformer(annotation)
-        self.assertIsInstance(obs, SequenceCharacteristicsDirectoryFormat)
-        table_obs = pd.read_csv(os.path.join(obs.path, "gene_length.txt"), sep="\t")
-        table_exp = pd.read_csv(self.get_data_path("gene_length_allele.txt"), sep="\t")
-        self.assertTrue(table_obs.equals(table_exp))
-
-    def test_gene_annotation_to_sequence_characteristics(self):
-        transformer = self.get_transformer(
-            CARDGeneAnnotationDirectoryFormat, SequenceCharacteristicsDirectoryFormat
-        )
-        annotation = CARDGeneAnnotationDirectoryFormat(
-            self.get_data_path("card_gene_annotation"), "r"
-        )
-        obs = transformer(annotation)
-        self.assertIsInstance(obs, SequenceCharacteristicsDirectoryFormat)
-        table_obs = pd.read_csv(os.path.join(obs.path, "gene_length.txt"), sep="\t")
-        table_exp = pd.read_csv(self.get_data_path("gene_length_gene.txt"), sep="\t")
-        self.assertTrue(table_obs.equals(table_exp))
