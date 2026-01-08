@@ -22,10 +22,10 @@ def get_gene_lengths(
     else:
         gene_name_col = "ARO Term"
 
-    len_all = pd.Series()
+    len_all = []
     gene_len_dir_fmt = SequenceCharacteristicsDirectoryFormat()
 
-    # Iterate over samples, read in each DataFrame and append it to the series
+    # Iterate over samples, read in each DataFrame and append to list
     for samp in os.listdir(str(annotations)):
         anno_txt = glob.glob(
             os.path.join(str(annotations), samp, "*_mapping_data.txt")
@@ -33,9 +33,20 @@ def get_gene_lengths(
         cols = [gene_name_col, "Reference Length"]
         len_sample = pd.read_csv(anno_txt, sep="\t", usecols=cols)
         len_sample = len_sample.set_index(cols[0])[cols[1]]
-        len_all = len_all.combine_first(len_sample)
+        len_all.append(len_sample)
+
+    # Concatenate
+    len_all = pd.concat(len_all)
+
+    # Keep first occurrence of each gene
+    len_all = len_all[~len_all.index.duplicated(keep="first")]
+
+    # Add column headers
+    len_all = len_all.rename_axis("id").to_frame(name="length")
 
     len_all.to_csv(
-        os.path.join(gene_len_dir_fmt.path, "gene_length.txt"), sep="\t", header=False
+        os.path.join(gene_len_dir_fmt.path, "sequence_characteristics.tsv"),
+        sep="\t",
+        header=True,
     )
     return gene_len_dir_fmt

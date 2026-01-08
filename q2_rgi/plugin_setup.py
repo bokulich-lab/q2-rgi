@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 import importlib
 
-from q2_types.feature_data import SequenceCharacteristics
+from q2_types.feature_data import FeatureData, SequenceCharacteristics
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.per_sample_sequences import (
     MAGs,
@@ -15,7 +15,16 @@ from q2_types.per_sample_sequences import (
     SequencesWithQuality,
 )
 from q2_types.sample_data import SampleData
-from qiime2.core.type import Bool, Choices, Collection, Int, List, Range, Str
+from qiime2.core.type import (
+    Bool,
+    Choices,
+    Collection,
+    Int,
+    List,
+    Properties,
+    Range,
+    Str,
+)
 from qiime2.plugin import Citations, Plugin
 
 from q2_rgi import __version__
@@ -891,9 +900,11 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=get_gene_lengths,
-    inputs={"annotations": CARDAlleleAnnotation | CARDGeneAnnotation},
+    inputs={"annotations": SampleData[CARDAlleleAnnotation | CARDGeneAnnotation]},
     parameters={},
-    outputs=[("gene_lengths", SequenceCharacteristics)],
+    outputs=[
+        ("gene_lengths", FeatureData[SequenceCharacteristics % Properties("length")])
+    ],
     input_descriptions={
         "annotations": "AMR gene annotations created with annotate-reads-card.",
     },

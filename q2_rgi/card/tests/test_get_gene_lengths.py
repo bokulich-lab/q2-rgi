@@ -20,7 +20,9 @@ class TestGetGeneLengths(TestPluginBase):
         )
         obs = get_gene_lengths(annotations)
         self.assertIsInstance(obs, SequenceCharacteristicsDirectoryFormat)
-        table_obs = pd.read_csv(os.path.join(obs.path, "gene_length.txt"), sep="\t")
+        table_obs = pd.read_csv(
+            os.path.join(obs.path, "sequence_characteristics.tsv"), sep="\t"
+        )
         table_exp = pd.read_csv(self.get_data_path("gene_length_allele.txt"), sep="\t")
         self.assertTrue(table_obs.equals(table_exp))
 
@@ -30,6 +32,8 @@ class TestGetGeneLengths(TestPluginBase):
         )
         obs = get_gene_lengths(annotations)
         self.assertIsInstance(obs, SequenceCharacteristicsDirectoryFormat)
-        table_obs = pd.read_csv(os.path.join(obs.path, "gene_length.txt"), sep="\t")
+        table_obs = pd.read_csv(
+            os.path.join(obs.path, "sequence_characteristics.tsv"), sep="\t"
+        )
         table_exp = pd.read_csv(self.get_data_path("gene_length_gene.txt"), sep="\t")
         self.assertTrue(table_obs.equals(table_exp))
