@@ -909,9 +909,12 @@ plugin.methods.register_function(
         "annotations": "AMR gene annotations created with annotate-reads-card.",
     },
     parameter_descriptions={},
-    output_descriptions={"gene_lengths": "Lengths of the genes in the annotations."},
+    output_descriptions={
+        "gene_lengths": "Reference length of the genes or alleles in the annotations."
+    },
     name="Get Gene Lengths",
-    description="Get the lengths of AMR genes from CARD annotations.",
+    description="Get the reference length of AMR genes or alleles from CARD "
+    "annotations.",
     citations=[],
 )
 
