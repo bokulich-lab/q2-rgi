@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 import importlib
 
+from q2_types.feature_data import FeatureData, SequenceCharacteristics
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.per_sample_sequences import (
     MAGs,
@@ -14,11 +15,21 @@ from q2_types.per_sample_sequences import (
     SequencesWithQuality,
 )
 from q2_types.sample_data import SampleData
-from qiime2.core.type import Bool, Choices, Collection, Int, List, Range, Str
+from qiime2.core.type import (
+    Bool,
+    Choices,
+    Collection,
+    Int,
+    List,
+    Properties,
+    Range,
+    Str,
+)
 from qiime2.plugin import Citations, Plugin
 
 from q2_rgi import __version__
 from q2_rgi.card.database import fetch_card_db
+from q2_rgi.card.get_gene_lengths import get_gene_lengths
 from q2_rgi.card.heatmap import heatmap
 from q2_rgi.card.kmer import (
     _kmer_query_mags,
@@ -885,6 +896,26 @@ plugin.methods.register_function(
     description="With kmer_build_card a kmer database can be built with a custom kmer."
     " size",
     citations=[citations["alcock_card_2023"], citations["wlodarski2025card"]],
+)
+
+plugin.methods.register_function(
+    function=get_gene_lengths,
+    inputs={"annotations": SampleData[CARDAlleleAnnotation | CARDGeneAnnotation]},
+    parameters={},
+    outputs=[
+        ("gene_lengths", FeatureData[SequenceCharacteristics % Properties("length")])
+    ],
+    input_descriptions={
+        "annotations": "AMR gene annotations created with annotate-reads-card.",
+    },
+    parameter_descriptions={},
+    output_descriptions={
+        "gene_lengths": "Reference length of the genes or alleles in the annotations."
+    },
+    name="Get Gene Lengths",
+    description="Get the reference length of AMR genes or alleles from CARD "
+    "annotations.",
+    citations=[],
 )
 
 # Registrations
