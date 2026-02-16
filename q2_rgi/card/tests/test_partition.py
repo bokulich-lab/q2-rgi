@@ -3,12 +3,12 @@ import os
 from qiime2.plugin.testing import TestPluginBase
 
 from q2_rgi.card.partition import (
-    collate_mags_annotations,
     collate_mags_kmer_analyses,
     collate_reads_allele_annotations,
     collate_reads_allele_kmer_analyses,
     collate_reads_gene_annotations,
     collate_reads_gene_kmer_analyses,
+    collate_sequences_annotations,
     partition_mags_annotations,
     partition_reads_allele_annotations,
     partition_reads_gene_annotations,
@@ -33,7 +33,7 @@ class TestPartition(TestPluginBase):
             files_to_assert=["amr_annotation.json", "amr_annotation.txt"],
             samples=["sample1/bin1", "sample2/bin2"],
             dir_format=CARDAnnotationDirectoryFormat,
-            function=collate_mags_annotations,
+            function=collate_sequences_annotations,
         )
 
     def test_collate_reads_allele_annotations(self):

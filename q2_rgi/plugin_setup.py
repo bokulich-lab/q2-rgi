@@ -10,6 +10,7 @@ import importlib
 from q2_types.feature_data import FeatureData, SequenceCharacteristics
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.per_sample_sequences import (
+    Contigs,
     MAGs,
     PairedEndSequencesWithQuality,
     SequencesWithQuality,
@@ -38,19 +39,19 @@ from q2_rgi.card.kmer import (
     kmer_query_mags_card,
     kmer_query_reads_card,
 )
-from q2_rgi.card.mags import annotate_mags_card
 from q2_rgi.card.partition import (
-    collate_mags_annotations,
     collate_mags_kmer_analyses,
     collate_reads_allele_annotations,
     collate_reads_allele_kmer_analyses,
     collate_reads_gene_annotations,
     collate_reads_gene_kmer_analyses,
+    collate_sequences_annotations,
     partition_mags_annotations,
     partition_reads_allele_annotations,
     partition_reads_gene_annotations,
 )
 from q2_rgi.card.reads import _annotate_reads_card, annotate_reads_card
+from q2_rgi.card.sequences import _annotate_sequences_card, annotate_sequences_card
 from q2_rgi.types import (
     CARDAnnotationJSONFormat,
     CARDAnnotationTXTFormat,
@@ -127,9 +128,42 @@ plugin.methods.register_function(
     citations=[citations["alcock_card_2023"]],
 )
 
+plugin.pipelines.register_function(
+    function=annotate_sequences_card,
+    inputs={"seqs": SampleData[MAGs | Contigs], "card_db": CARDDatabase},
+    parameters={
+        "alignment_tool": Str % Choices(["BLAST", "DIAMOND"]),
+        "split_prodigal_jobs": Bool,
+        "include_loose": Bool,
+        "include_nudge": Bool,
+        "low_quality": Bool,
+        "threads": Int % Range(0, None, inclusive_start=False),
+        "num_partitions": Int % Range(0, None, inclusive_start=False),
+    },
+    outputs=[("amr_annotations", SampleData[CARDAnnotation])],
+    input_descriptions={
+        "seqs": "Sequences to be annotated with CARD.",
+        "card_db": "CARD Database.",
+    },
+    parameter_descriptions={
+        "alignment_tool": "Specify alignment tool BLAST or DIAMOND.",
+        "split_prodigal_jobs": "Run multiple prodigal jobs simultaneously for contigs"
+        " in one sample",
+        "include_loose": "Include loose hits in addition to strict and perfect hits.",
+        "include_nudge": "Include hits nudged from loose to strict hits.",
+        "low_quality": "Use for short contigs to predict partial genes.",
+        "threads": "Number of threads (CPUs) to use in the BLAST search.",
+        "num_partitions": "Number of partitions that should run in parallel.",
+    },
+    output_descriptions={"amr_annotations": "AMR annotation as .txt and .json file."},
+    name="Annotate sequences with antimicrobial resistance genes from CARD.",
+    description="Annotate sequences with antimicrobial resistance genes from CARD.",
+    citations=[citations["alcock_card_2023"]],
+)
+
 plugin.methods.register_function(
-    function=annotate_mags_card,
-    inputs={"mag": SampleData[MAGs], "card_db": CARDDatabase},
+    function=_annotate_sequences_card,
+    inputs={"seqs": SampleData[MAGs | Contigs], "card_db": CARDDatabase},
     parameters={
         "alignment_tool": Str % Choices(["BLAST", "DIAMOND"]),
         "split_prodigal_jobs": Bool,
@@ -138,12 +172,9 @@ plugin.methods.register_function(
         "low_quality": Bool,
         "threads": Int % Range(0, None, inclusive_start=False),
     },
-    outputs=[
-        ("amr_annotations", SampleData[CARDAnnotation]),
-        ("feature_table", FeatureTable[Frequency]),
-    ],
+    outputs=[("amr_annotations", SampleData[CARDAnnotation])],
     input_descriptions={
-        "mag": "MAGs to be annotated with CARD.",
+        "seqs": "Sequences to be annotated with CARD.",
         "card_db": "CARD Database.",
     },
     parameter_descriptions={
@@ -155,12 +186,9 @@ plugin.methods.register_function(
         "low_quality": "Use for short contigs to predict partial genes.",
         "threads": "Number of threads (CPUs) to use in the BLAST search.",
     },
-    output_descriptions={
-        "amr_annotations": "AMR annotation as .txt and .json file.",
-        "feature_table": "Frequency table of ARGs in all samples.",
-    },
-    name="Annotate MAGs with antimicrobial resistance genes from CARD.",
-    description="Annotate MAGs with antimicrobial resistance genes from CARD.",
+    output_descriptions={"amr_annotations": "AMR annotation as .txt and .json file."},
+    name="Annotate sequences with antimicrobial resistance genes from CARD.",
+    description="Annotate sequences with antimicrobial resistance genes from CARD.",
     citations=[citations["alcock_card_2023"]],
 )
 
@@ -453,7 +481,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=collate_mags_annotations,
+    function=collate_sequences_annotations,
     inputs={"annotations": List[SampleData[CARDAnnotation]]},
     parameters={},
     outputs={"collated_annotations": SampleData[CARDAnnotation]},
@@ -582,7 +610,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=collate_mags_annotations,
+    function=collate_sequences_annotations,
     inputs={"annotations": List[SampleData[CARDAnnotation]]},
     parameters={},
     outputs={"collated_annotations": SampleData[CARDAnnotation]},
