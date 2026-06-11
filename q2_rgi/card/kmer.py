@@ -68,7 +68,7 @@ def kmer_query_reads_card(
 
     # Run _kmer_query_reads for every partition
     for part in partitioned_annotations.values():
-        (kmer_analysis_allele, kmer_analysis_gene) = kmer_query(
+        kmer_analysis_allele, kmer_analysis_gene = kmer_query(
             card_db=card_db,
             kmer_db=kmer_db,
             amr_annotations=part,

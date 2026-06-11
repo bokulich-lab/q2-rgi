@@ -1,15 +1,16 @@
-name: Test
+name: CI
 on:
   pull_request:
     branches: ["main"]
   push:
     branches: ["main"]
+    tags: ["*"]
+  release:
+    types: [published]
 
 jobs:
   ci:
     uses: bokulich-lab/utilities/.github/workflows/ci.yaml@main
     with:
-      distro: amplicon
-
-  qiime-ci:
-    uses: ./.github/workflows/library_ci.yml
+      distro: qiime2
+      build_docker: true
