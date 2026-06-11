@@ -55,7 +55,7 @@ def annotate_reads_card(
 
     # Run _annotate_reads_card for every partition
     for read in partitioned_seqs.values():
-        (allele_annotation, gene_annotation, allele_table, gene_table) = annotate(
+        allele_annotation, gene_annotation, allele_table, gene_table = annotate(
             read, card_db, aligner, threads, include_wildcard, include_other_models
         )
 
