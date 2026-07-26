@@ -16,7 +16,7 @@ from q2_rgi.types import (
 )
 
 
-def collate_mags_annotations(
+def collate_sequences_annotations(
     annotations: CARDAnnotationDirectoryFormat,
 ) -> CARDAnnotationDirectoryFormat:
     return _collate(annotations)
