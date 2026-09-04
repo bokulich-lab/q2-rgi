@@ -9,5 +9,5 @@ jobs:
   qiime-ci:
     uses: qiime2/distributions/.github/workflows/lib-ci-dev.yaml@dev
     with:
-      distro: qiime2
+      distro: pathogenome
       recipe-path: 'conda-recipe'
