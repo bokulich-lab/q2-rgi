@@ -12,5 +12,5 @@ jobs:
   ci:
     uses: bokulich-lab/utilities/.github/workflows/ci.yaml@main
     with:
-      distro: qiime2
+      distro: pathogenome
       build_docker: true

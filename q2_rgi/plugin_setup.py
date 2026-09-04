@@ -107,18 +107,18 @@ plugin.methods.register_function(
     parameters={},
     outputs=[
         ("card_db", CARDDatabase),
-        ("61_mer_db", CARDKmerDatabase),
-        ("15_mer_db", CARDKmerDatabase),
+        ("kmer_db_61", CARDKmerDatabase),
+        ("kmer_db_15", CARDKmerDatabase),
     ],
     input_descriptions={},
     parameter_descriptions={},
     output_descriptions={
         "card_db": "CARD and WildCARD database of resistance genes, their products and "
         "associated phenotypes.",
-        "61_mer_db": "Database of 61-mers that are uniquely found within AMR alleles "
+        "kmer_db_61": "Database of 61-mers that are uniquely found within AMR alleles "
         "of individual pathogen species, pathogen genera, pathogen-restricted "
         "plasmids, or promiscuous plasmids.",
-        "15_mer_db": "Database of 15-mers that are uniquely found within AMR alleles "
+        "kmer_db_15": "Database of 15-mers that are uniquely found within AMR alleles "
         "of individual pathogen species, pathogen genera, pathogen-restricted "
         "plasmids, or promiscuous plasmids.",
     },
