@@ -1,3 +1,4 @@
+# testing 123
 name: QIIME 2 CI
 on:
   pull_request:
@@ -9,5 +10,5 @@ jobs:
   qiime-ci:
     uses: qiime2/distributions/.github/workflows/lib-ci-dev.yaml@dev
     with:
-      distro: pathogenome
+      distro: qiime2
       recipe-path: 'conda-recipe'
